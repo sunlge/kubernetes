@@ -1,0 +1,56 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: test-rbac
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: rbac-pod
+  namespace: test-rbac
+  labels:
+    app: myapp
+spec:
+  containers:
+  - image: ikubernetes/myapp:v1
+    name: rbac-pod-test
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: rbac-sunlge
+  namespace: test-rbac
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: pods-reader
+  namespace: test-rbac
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  verbs:
+  - get
+  - list
+  - watch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: read-pods-binding
+  namespace: test-rbac
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: pods-reader
+#subjects:
+#- apiGroup: rbac.authorization.k8s.io
+#  kind: User
+#  name: rbac-sunlge  
+#  namespace: test-rbac
+subjects:
+- kind: ServiceAccount
+  name: rbac-sunlge  ##这个就是SA的账号名称
+  namespace: test-rbac

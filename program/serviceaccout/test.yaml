@@ -1,0 +1,12 @@
+##查看这个pod是否会自动绑定一个default的token信息
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-test-demo
+  namespace: default
+  labels:
+    app: myapp
+spec:
+  containers:
+  - name: myapp
+    image: ikubernetes/myapp:v2

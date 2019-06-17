@@ -1,0 +1,69 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv01
+  labels:
+    name: pv01
+spec:
+  nfs:
+    path: /data/pv01
+    server: storage01.sunlge.com
+  accessModes: ["ReadWriteMany","ReadWriteOnce"]
+  capacity:
+    storage: 5Gi
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv02
+  labels:
+    name: pv02
+spec:
+  nfs:
+    path: /data/pv02
+    server: storage01.sunlge.com
+  accessModes: ["ReadWriteOnce"]
+  capacity:
+    storage: 5Gi
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv03
+  labels:
+    name: pv03
+spec:
+  nfs:
+    path: /data/pv03
+    server: storage01.sunlge.com
+  accessModes: ["ReadWriteMany","ReadWriteOnce"]
+  capacity:
+    storage: 5Gi
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv04
+  labels:
+    name: pv04
+spec:
+  nfs:
+    path: /data/pv04
+    server: storage01.sunlge.com
+  accessModes: ["ReadWriteMany","ReadWriteOnce"]
+  capacity:
+    storage: 5Gi
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv05
+  labels:
+    name: pv05
+spec:
+  nfs:
+    path: /data/pv05
+    server: storage01.sunlge.com
+  accessModes: ["ReadWriteMany","ReadWriteOnce"]
+  capacity:
+    storage: 5Gi

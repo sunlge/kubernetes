@@ -1,0 +1,30 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    run: volu-test-emptydir
+  name: volumet-emptydir
+spec:
+  volumes:
+  - name: html
+    emptyDir: {}
+  containers:
+  - name: myapp-busybox
+    image: busybox
+    ports:
+    volumeMounts:
+    - name: html
+      mountPath: /var/log/myapp/
+    command:
+    - "/bin/sh"
+    - "-c"
+    - "sleep 3600"
+  - name: myapp-v1
+    image: ikubernetes/myapp:v1
+    volumeMounts:
+    - name: html
+      mountPath: /webdata/example/
+    command: 
+    - "/bin/sh"
+    - "-c"
+    - "while true;do echo $(date) >> /webdata/example/index.html;sleep 5;done"

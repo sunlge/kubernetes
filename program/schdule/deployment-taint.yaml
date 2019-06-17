@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    run: sunlge-test
+  name: sunlge-test
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      run: sunlge-test
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        run: sunlge-test
+    spec:
+      containers:
+      - image: ikubernetes/myapp:v1
+        name: sunlge-test
+        ports:
+        - name: http
+          containerPort: 80
+      tolerations: 
+      - key: "node-type"
+        operator: "Equal"
+        value: "production"
+        effect: "NoSchedule"
+#        tolerationSeconds: 10
+
+#节点污点的三种终态：
+#      NoSchedule: 一定不能被调度
+#      PreferNoSchedule: 尽量不要调度
+#      NoExecute: 不仅不会调度, 还会驱逐Node上已有的Pod立即驱除
+#        
+#管理节点污点：
+#        kubectl taint node node01.sunlge.com node-type=production:NoSchedule
+#        kubectl taint node node1 key1:NoSchedule-  # 这里的key可以不用指定value
+#        kubectl taint node node1 key1:NoExecute-
+#        kubectl taint node node1 key1-  删除指定key所有的effect
+#        kubectl taint node node1 key2:NoSchedule-

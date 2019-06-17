@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    run: myapp-test
+  name: myapp-test
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: myapp-test01
+  template:
+    metadata:
+      labels:
+        run: myapp-test01
+    spec:
+      containers:
+      - image: ikubernetes/myapp:v1
+        name: myapp-v1
+      - image: busybox:1.27
+        name: myapp-v2
+        command:
+        - "/bin/sh"
+        - "-c"
+        - "echo $(date) >> /tmp/test.html;sleep 5"
