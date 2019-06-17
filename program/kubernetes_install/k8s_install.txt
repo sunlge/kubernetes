@@ -1,6 +1,6 @@
 K8s中文社区文档：
 	http://docs.kubernetes.org.cn/230.html
-
+ 
 官方网站：
 	https://kubernetes.io/docs/reference/setup-tools/kubeadm/kubeadm-init/
 	
