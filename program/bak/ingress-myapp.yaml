@@ -14,3 +14,4 @@ spec:
         backend:
          serviceName: myapp-ingress  ##后端是svc,相当于一个svc的标签去标记svc的后端pod。
          servicePort: 80
+
