@@ -1,4 +1,7 @@
 kubeadm token create --print-join-command  ##下面的命令会自动重新生成一个token，并且产生一条命令。生成以后直接复制即可。
+
+kubectl drain node02.sunlge.com --ignore-daemonsets	##驱逐node节点
+kubectl delete nodes node02.sunlge.com			##删除此节点
  
 kubeadm config images list	##获取k8s所需版本镜像
 kubeadm init       ##初始化集群
