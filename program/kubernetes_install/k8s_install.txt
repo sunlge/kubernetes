@@ -201,7 +201,7 @@ kubelet 的主要功能就是
 		
 kubectl 的主要功能就是管理集群
 		
-[root@k8s1 ~]# yum -y install docker-ce kubelet kubeadm kubectl
+[root@k8s1 ~]# yum -y  install docker-ce-18.09.3 kubelet-1.14.0-0  kubeadm-1.14.0-0 kubectl-1.14.0-0
 
 [root@master ~]# vim /etc/docker/daemon.json
 {
@@ -263,6 +263,7 @@ Environment="NO_PROXY=127.0.0.0/8,192.168.100.0/24"
 [root@k8s1 ~]# systemctl stop kubelet
 [root@k8s1 ~]# systemctl enable !$
 [root@k8s1 ~]# systemctl enable docker
+[root@k8s1 ~]# systemctl start !$
 
 ##初始化
 [root@k8s1 ~]# kubeadm init --help
@@ -275,13 +276,14 @@ Environment="NO_PROXY=127.0.0.0/8,192.168.100.0/24"
 [root@k8s1 ~]# cat /etc/sysconfig/kubelet
 KUBELET_EXTRA_ARGS="--fail-swap-on=false" ##swap开启时不让其出错
 
-[root@k8s1 ~]# kubeadm init --kubernetes-version=v1.14.0 --pod-network-cidr=10.244.0.0/16 --service-cidr=10.96.0.0/12 --ignore-preflight-errors=Swap
+[root@k8s1 ~]# kubeadm init --kubernetes-version=v1.14.0 --pod-network-cidr=10.244.0.0/16 --service-cidr=10.96.0.0/12 --ignore-preflight-errors=Swap 
 
 ##关于绑定网卡问题：
 	https://k8smeetup.github.io/docs/reference/setup-tools/kubeadm/kubeadm-init
 	
 当运行 init 时，您必须保证指定一个内部 IP 作为 API server 的绑定地址，例如：
 	kubeadm init --apiserver-advertise-address=<private-master-ip>
+
 当工作 node 配置好后，添加一个指定工作 node 私有 IP 的参数到 /etc/systemd/system/kubelet.service.d/10-kubeadm.conf 中：
 	--node-ip=<private-node-ip>
 
@@ -319,9 +321,10 @@ kubeadm join 192.168.100.10:6443 --token diytzd.hnivfvkb6ursbqhq \
 
 
 ##节点安装
-[root@k8s2 ~]# yum -y install docker-ce kubelet kubeadm  //kubectl(可选_执行客户端程序)
+[root@k8s2 ~]# yum -y install docker-ce-18.09.3 kubelet-1.14.0-0 kubeadm-1.14.0-0  //kubectl(可选_执行客户端程序)
 [root@node1 docker]# systemctl enable kubelet
 [root@node1 docker]# systemctl enable docker	
+[root@node1 docker]# systemctl start  docker
 	
 	
 	
