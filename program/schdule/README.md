@@ -43,7 +43,7 @@ QoS：
 节点污点的三种终态，taint的effect定义对Pod排斥效果：
       NoSchedule: 一定不能被调度
       PreferNoSchedule: 尽量不要调度
-      NoExecute: 不仅不会调度, 还会驱逐Node上已有的Pod立即驱除
+      NoExecute: 不仅不会调度, 还会将Node上已有的Pod立即驱除
 	
 管理节点污点：
 	kubectl taint node node01.sunlge.com node-type=production:NoSchedule
