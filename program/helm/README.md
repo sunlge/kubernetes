@@ -90,19 +90,22 @@ Error: 0 chart(s) linted, 1 chart(s) failed
 
 1 chart(s) linted, no failures	
 ```	
-### 打包自己的程序	
+### 打包自己的程序
+```
 [root@master helm]# helm package myapp/
 Successfully packaged chart and saved it to: /root/program/helm/myapp-0.0.1.tgz
 [root@master helm]# ls  mya*
 myapp  myapp-0.0.1.tgz  
 
 ### 打开本地端口
+```
 [root@master helm]# helm serve
 Regenerating index. This may take a moment.
 Now serving you on 127.0.0.1:8879
 	
 ### 搜索本地的helm程序包
+```
 [root@master ingress]# helm search myapp
 NAME            CHART VERSION   APP VERSION     DESCRIPTION                                     
 local/myapp     0.0.1           1.0             A Helm chart for Kubernetes myapp test of sunlge
-	
+```	
