@@ -3,7 +3,7 @@
 ## Ingress Nginx Controller 部署方式点击以下链接:
 [ingress_install_nginx](https://github.com/sunlge/kubernetes/tree/k8s-1.14.0/program/ingress/ingress_install_nginx)
 
-## Ingress Traefik Controller 不是点击以下链接:
+## Ingress Traefik Controller 部署点击以下链接:
 [Ingress_Traefik_ingress](https://github.com/sunlge/kubernetes/tree/k8s-1.14.0/program/ingress/Ingress_Traefik_ingress)
 
 ### 内部DNS域名格式
