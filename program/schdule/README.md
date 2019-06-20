@@ -1,7 +1,7 @@
 # Pod资源调度
 
 
-### 调度器策略：
+### 调度器策略： 
 	预选策略:
 		ChekNodeCondition:检查节点是否正常
 		PodToleratesNodeTaints：检查Pod上的spec.tolerations可容忍的污点是否完全包含节点上的污点
