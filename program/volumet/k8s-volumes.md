@@ -89,10 +89,10 @@ kubectl explain PersistentVolume.spec.persistentVolumeReclaimPolicy	##pv空间�
 echo TXlwYXNzMTIz |base64 -d
 ```
 ### 使用指定的key创建名为tls-secret的TLS secret
-kubectl create secret tls tls-secret --cert=./tls.crt --key=./tls.key --dry-run -oyaml
+	kubectl create secret tls tls-secret --cert=./tls.crt --key=./tls.key --dry-run -oyaml
 
 ### 查看帮助
-kubectl create secret --help
-  docker-registry 创建一个给 Docker registry 使用的 secret
-  generic         从本地 file, directory 或者 literal value 创建一个 secret
-  tls             创建一个 TLS secret
+	kubectl create secret --help
+	  docker-registry 创建一个给 Docker registry 使用的 secret
+	  generic         从本地 file, directory 或者 literal value 创建一个 secret
+	  tls             创建一个 TLS secret
