@@ -1,6 +1,6 @@
 # k8s网络概述 
 
-### kubernetes网络通信：
+### kubernetes网络通信： 
     1.容器间通信：同一个Pod内的多个容器间的通信，lo
     2.Pod通信：Pod IP <---> Pod IP
     3.Pod与service通信：PodIP <---> ClusterIP
