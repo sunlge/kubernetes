@@ -16,11 +16,11 @@
 			https://github.com/kubernetes/kubernetes/tree/master/pkg/scheduler/algorithm/priorities
 
 
-#### CPU单位:
+### CPU单位:
 1颗逻辑CPU
 	1=1000,millicores
 	500m=0.5CPU
-#### 内存单位：
+### 内存单位：
 	E、P、T、G、M、K
 	Ei、Pi
 
