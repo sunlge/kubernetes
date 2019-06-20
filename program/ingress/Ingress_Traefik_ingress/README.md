@@ -1,5 +1,4 @@
-#########################################################Ingress 简介#######################################################
-
+###Ingress 简介
 理解Ingress:
     简单的说，ingress就是从kubernetes集群外访问集群的入口，将用户的URL请求转发到不同的service上,通过service资源去标识后端Pod，将后端的Pod的信息直接注入到ingress-controoler中。
     Ingress相当于nginx、apache等负载均衡方向代理服务器，其中还包括规则定义，即URL的路由信息，路由信息得的刷新由Ingress controller来提供。
