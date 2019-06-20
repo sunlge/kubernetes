@@ -88,3 +88,4 @@ spec:
         backend:
          serviceName: tomcat-svc
          servicePort: 8080  #定义的就是后端svc所暴露的端口
+
