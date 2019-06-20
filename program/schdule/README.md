@@ -17,9 +17,9 @@
 
 
 ### CPU单位:
-1颗逻辑CPU
-	1=1000,millicores
-	500m=0.5CPU
+	1颗逻辑CPU
+		1=1000,millicores
+		500m=0.5CPU
 ### 内存单位：
 	E、P、T、G、M、K
 	Ei、Pi
