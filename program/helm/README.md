@@ -1,4 +1,4 @@
-#  k8s的helm基本介绍
+#  k8s的helm基本介绍 
 ## helm的 RBAC 配置文件示例：
 	https://github.com/helm/helm/blob/master/docs/rbac.md
 	
