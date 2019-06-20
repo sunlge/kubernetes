@@ -1,5 +1,4 @@
-# k8s的ingress的tls的secret的资源创建 
-
+# Ingress Nginx Controller控制器的TLS的secret资源示例
 ### Secret资源的三种类型：
 ```
 docker-registry  
