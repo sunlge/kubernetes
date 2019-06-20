@@ -1,4 +1,5 @@
 # k8s的Ingress的定义方法及其示例
+
 ## Ingress Nginx Controller 部署方式点击以下链接:
 [ingress_install_nginx](https://github.com/sunlge/kubernetes/tree/k8s-1.14.0/program/ingress/ingress_install_nginx)
 
@@ -15,7 +16,6 @@ pod_name.service_name.ns_name.svc.cluster.local
 ```
 服务网格中，Traefik，Traefik，nginx
 服务网格倾向于使用Envoy，据说Traefik是为了服务网格而出现的
-
 做微服务更加倾向于Envoy
 
 Service模型：
@@ -34,8 +34,7 @@ LBaas：腾讯的SLB
 LBaas是OpenStack的负载均衡服务，默认采用的是Haproxy作为Driver实现其负载均衡功能，默认情况下，LBaaS不提供高可能功能，
 ```	
 ### 资源暴露类型：
-```
-	LoadBlance：在公有云上部署，需要与公有云的LBaas结合
+```	LoadBlance：在公有云上部署，需要与公有云的LBaas结合
 	externalName：将集群外部的服务流量引入内部
 		强依赖于DNS，解析A记录，依靠于CNAME -> FQDN
 	NodePort：暴露集群内部服务x
@@ -43,13 +42,13 @@ LBaas是OpenStack的负载均衡服务，默认采用的是Haproxy作为Driver�
 	
 	kubectl explain svc.spec.sessionAffinity  ##绑定Session，支持动态绑定，粘性会话
 
-### ingress获取地址
+##ingress获取地址
 	for i in rbac.yaml namespace.yaml mandatory.yaml with-rbac.yaml configmap.yaml ;do wget https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/$i;done
 
 	kubectl explain ingress.spec.rules	  ##定义当前ingress资源的转发规则
 	kubectl explain ingress.spec.backend	  ##定义全局默认
 
-#生成证书
+##生成证书
 openssl genrsa -out tls.key 2048
 openssl req -new -x509 -key tls.key -out tls.crt -subj /C=CN/ST=Beijing/L=Beijing/O=DevOps/CN=master.sunlge.com -days 3605
 
