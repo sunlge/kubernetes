@@ -213,7 +213,8 @@ subjects:
 kubectl get clusterrole		##查看系统的ClusterRole
 kubectl describe clusterrolebindings cluster-admin
 ```
-### 部署一个dashborid：
+### 部署一个dashboard：
+```
 	将service改为NodePort
 	认证：
 		认证时的账号必须为ServiceAccout
@@ -223,20 +224,23 @@ kubectl describe clusterrolebindings cluster-admin
 			
 		
 		kubeconfig：把ServiceAccount的token封装为kubeconfig文件
-		
+    
+    wget https://raw.githubusercontent.com/kubernetes/dashboard/v1.10.1/src/deploy/recommended/kubernetes-dashboard.yaml
 
-	wget https://raw.githubusercontent.com/kubernetes/dashboard/v1.10.1/src/deploy/recommended/kubernetes-dashboard.yaml
-	[root@master pki]# kubectl patch svc -n kube-system kubernetes-dashboard -p '{"spec":{"type":"NodePort"}}'
-	也可以直接在源码里面的spec下直接加一个type:NodePort就好了
-	[root@master pki]# cd /etc/kubernetes/pki/^C
-
+##下面操作也可以直接在源码里面的spec下直接加一个type:NodePort就好了
+    [root@master pki]# pwd
+    /etc/kubernetes/pki
+    [root@master pki]# kubectl patch svc -n kube-system kubernetes-dashboard -p '{"spec":{"type":"NodePort"}}'	
+    
+```
 
 
 ### 申请证书
+	[root@master pki]# cd /etc/kubernetes/pki/^C
 	[root@master pki]# (umask 077; openssl genrsa -out dashbord.key 2048)
 	[root@master pki]# openssl req -new -key dashbord.key -out dashbord.csr -subj "/O=sunlge/CN=master.sunlge.com"
 
-###签署颁发证书
+### 签署颁发证书
 ```
 [root@master pki]# openssl x509 -req -in dashbord.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out dashbord.crt -days 999
 [root@master pki]# kubectl config set-cluster kubernetes --certificate-authority=./ca.crt --server="https://192.168.100.10:6443" --embed-certs=true --kubeconfig=/root/def-ns-admin.conf
@@ -264,9 +268,9 @@ Switched to context "def-ns-admin@kubernetes".
 [root@master pki]#  kubectl create serviceaccount def-ns-admin -n default
 [root@master pki]#  kubectl create rolebinding def-ns-admin --clusterrole=admin --serviceaccount=default:def-ns-admin	
 
-	
-	https://github.com/fanfengqiang/k8s_manifests/tree/master/dashboard
-
 [root@master dashboard]# kubectl -n kube-system create secret tls k8s-dashboard-secret --key ./tls.key --cert ./tls.crt
 [root@master dashboard]# kubectl get secrets --all-namespaces |grep k8s-dashboard-secret
 ```
+
+## 引用地址
+	https://github.com/fanfengqiang/k8s_manifests/tree/master/dashboard
