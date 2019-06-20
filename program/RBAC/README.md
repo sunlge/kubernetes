@@ -73,7 +73,7 @@ spec:
 ### 切换用户空间
 	kubectl config use-context sunlge@kubernetes
 
-###自己建立一个自部署证书，作为另一个账号的认证证书文件。
+### 自己建立一个自部署证书，作为另一个账号的认证证书文件。
 ```
 [root@master serviceaccout]# (umask 077; openssl genrsa -out sunlge.key 2048)
 [root@master serviceaccout]# openssl req -new -key sunlge.key -out sunlge.csr -subj "/CN=sunlge" ##这里的CN等于你的账号名称
