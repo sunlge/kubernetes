@@ -272,5 +272,5 @@ Switched to context "def-ns-admin@kubernetes".
 [root@master dashboard]# kubectl get secrets --all-namespaces |grep k8s-dashboard-secret
 ```
 
-## 引用地址
+## 参考地址
 	https://github.com/fanfengqiang/k8s_manifests/tree/master/dashboard
