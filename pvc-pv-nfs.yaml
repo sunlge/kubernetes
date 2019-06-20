@@ -3,6 +3,7 @@ kind: Namespace
 metadata:
   name: pv-test
 
+
 ---
 apiVersion: v1
 kind: PersistentVolume
@@ -61,6 +62,7 @@ spec:
     persistentVolumeClaim:
       claimName: pvc-nfs-01
       readOnly: false
+
 #下面是绑定存储卷pv的写法
 #    - name: html
 #      nfs:
