@@ -9,7 +9,7 @@
 [root@harbor ~]# tar -zxf harbor-offline-installer-v1.7.0.tgz
 [root@harbor ~]# cd harbor/
 ### 制作证书，可以参考   [证书制作](https://github.com/sunlge/kubernetes/blob/master/program/build%20certificate.md)
-`[root@harbor harbor]# mkdir pki`
+`[root@harbor harbor]# mkdir pki`  
 **制作一个私钥**
 ```
 [root@harbor harbor]#cd pki
