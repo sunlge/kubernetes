@@ -1,7 +1,7 @@
 # Docker Harbor Deployment
 ## **`Harbor Version`**:`1.7.0`
-## **`Docker`版本**:`18.09.6`         //配置好yum源，直接安装即可
-## **`docker-compose`版本:** 1.18.0   //配置好yum源，直接安装即可
+## **`Docker`版本:**`18.09.6`                                     //配置好yum源，直接安装即可
+## **`docker-compose`版本:** 1.18.0                               //配置好yum源，直接安装即可
 ## **Harbor**版本地址：`https://github.com/goharbor/harbor/releases`
 **获取地址** `https://storage.googleapis.com/harbor-releases/release-1.7.0/harbor-offline-installer-v1.7.0.tgz`
 ****
@@ -24,7 +24,7 @@
 ```
 
 **3.根据证书请求文件生成一个CA自签署证书即可**  
-`[root@harbor pki]# openssl x509 -req -days 365 -in harbor.csr  -signkey harbor.key -out harbor.crt`
+`[root@harbor pki]# openssl x509 -req -days 365 -in harbor.csr  -signkey harbor.key -out harbor.crt`  
 `Docker`守护进程会将`.crt`文件解释为CA证书，将`.cert`文件解释为客户机证书，先将`.crt`文件转换一份`.cert`文件  
 **官方解释地址**`https://docs.docker.com/engine/security/certificates/`
 ```
