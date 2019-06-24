@@ -15,6 +15,7 @@
 [root@harbor yum.repos.d]# yum -y install docker-ce docker-common
 [root@harbor yum.repos.d]# cd
 ```
+### 安装Harbor
 ```
 [root@harbor ~]# wget https://storage.googleapis.com/harbor-releases/release-1.7.0/harbor-offline-installer-v1.7.0.tgz
 [root@harbor ~]# tar -zxf harbor-offline-installer-v1.7.0.tgz
