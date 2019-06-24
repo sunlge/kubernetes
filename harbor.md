@@ -5,6 +5,16 @@
 ## **Harbor**版本地址：`https://github.com/goharbor/harbor/releases`
 **获取地址** `https://storage.googleapis.com/harbor-releases/release-1.7.0/harbor-offline-installer-v1.7.0.tgz`
 ****
+### 安装Docker,docker-compose
+```
+[root@harbor ~]# cd /etc/yum.repos.d/
+[root@harbor yum.repos.d]# wget https://raw.githubusercontent.com/sunlge/kubernetes/master/CentOS7-Base-163.repo
+[root@harbor yum.repos.d]# wget https://raw.githubusercontent.com/sunlge/kubernetes/master/docker-ce.repo
+[root@harbor yum.repos.d]# yum clean all
+[root@harbor yum.repos.d]# yum makecache
+[root@harbor yum.repos.d]# yum -y install docker-ce docker-common
+[root@harbor yum.repos.d]# cd
+```
 ```
 [root@harbor ~]# wget https://storage.googleapis.com/harbor-releases/release-1.7.0/harbor-offline-installer-v1.7.0.tgz
 [root@harbor ~]# tar -zxf harbor-offline-installer-v1.7.0.tgz
