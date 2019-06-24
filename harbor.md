@@ -19,11 +19,13 @@
 [root@harbor pki]# openssl genrsa -out harbor.key 2048
 ```
 **2.根据私钥生成一个证书请求文件**  
-`[root@harbor pki]# openssl req -new -key harbor.key  -out harbor.csr -subj "/C=bj/ST=bj/L=bj/O=sunlge/OU=Personal/CN=harbor.sunlge.com" -key harbor.key  -out harbor.csr"`
+```
+[root@harbor pki]# openssl req -new -key harbor.key  -out harbor.csr -subj "/C=bj/ST=bj/L=bj/O=sunlge/OU=Personal/CN=harbor.sunlge.com" -key harbor.key  -out harbor.csr"
+```
 
-**根据证书请求文件生成一个CA自签署证书即可**  
+**3.根据证书请求文件生成一个CA自签署证书即可**  
 `[root@harbor pki]# openssl x509 -req -days 365 -in harbor.csr  -signkey harbor.key -out harbor.crt`
-`Docker`守护进程会将`.crt`文件解释为CA证书，将`.cert`文件解释为客户机证书，先将`.crt`文件转换一份`.cert`文件
+`Docker`守护进程会将`.crt`文件解释为CA证书，将`.cert`文件解释为客户机证书，先将`.crt`文件转换一份`.cert`文件  
 **官方解释地址**`https://docs.docker.com/engine/security/certificates/`
 ```
 [root@harbor pki]# openssl x509 -inform PEM -in harbor.crt -out harbor.cert
