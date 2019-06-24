@@ -3,7 +3,7 @@
   openssl genrsa -out "/etc/gitlab/ssl/gitlab.exampre.com.key 2048
   openssl req -new -key /etc/gitlab/ssl/gitlab.exampre.com.key  -out "/etc/gitlab/ssl/gitlab.exampre.com.csr"
 ```
-### 申请自签署证书 signkey
+### 申请自签署证书 signkey 
 ```
   openssl x509 -req -days 365 -in "/etc/gitlab/ssl/gitlab.exampre.com.csr" -signkey "/etc/gitlab/ssl/gitlab.exampre.com.key" -out "/etc/gitlab/ssl/gitlab.exampre.com.crt"
 ```
