@@ -60,13 +60,14 @@
 [root@harbor harbor]# sed -ri "s@(^ssl_cert =).*@\1 /root/harbor/pki/harbor.crt@" harbor.cfg
 [root@harbor harbor]# sed -ri "s@(^ssl_cert_key =).*@\1 /root/harbor/pki/harbor.key@" harbor.cfg
 [root@harbor harbor]# sed -ri "s@(^secretkey_path =).*@\1 /root/harbor/pki@" harbor.cfg
+[root@harbor harbor]# sed -i 's@/data/secretkey@/root/harbor/pki@g ' docker-compose.yml
 
 [root@harbor harbor]# cat -n harbor.cfg | sed -n '8p;12p;24p;25p;28p;69p'
      8  hostname = harbor.sunlge.com                      ##域名或者主机名
     12  ui_url_protocol = https                           ##http or https 协议
     24  ssl_cert = /root/harbor/pki/harbor.crt            ##证书目录，指定crt证书文件目录
     25  ssl_cert_key = /root/harbor/pki/harbor.key        ##证书目录，指定key证书获取密钥
-    28  secretkey_path = /root/harbor/pki                 ##自动生成的一个secretkey文件
+    28  secretkey_path = /root/harbor/pki                 ##自动生成的一个secretkey文件,此处不建议更改，如要更改，请把docker-compose.yml文件里volumes字段对应的/data/secretkey改成你自定义的。账户密码文件
     69  harbor_admin_password = Harbor12345               ##Harbor仓库的默认密码
  ```
 **直接执行harbor目录下install一键安装脚本即可**
