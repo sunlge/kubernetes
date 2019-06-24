@@ -60,7 +60,7 @@
 [root@harbor harbor]# sed -ri "s@(^ssl_cert =).*@\1 /root/harbor/pki/harbor.crt@" harbor.cfg
 [root@harbor harbor]# sed -ri "s@(^ssl_cert_key =).*@\1 /root/harbor/pki/harbor.key@" harbor.cfg
 [root@harbor harbor]# sed -ri "s@(^secretkey_path =).*@\1 /root/harbor/pki@" harbor.cfg
-[root@harbor harbor]# sed -i 's@/data/secretkey@/root/harbor/pki@g ' docker-compose.yml
+[root@harbor harbor]# sed -i 's@/data/secretkey@/root/harbor/pki/secretkey@g ' docker-compose.yml
 
 [root@harbor harbor]# cat -n harbor.cfg | sed -n '8p;12p;24p;25p;28p;69p'
      8  hostname = harbor.sunlge.com                      ##域名或者主机名
