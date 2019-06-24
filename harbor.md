@@ -1,4 +1,5 @@
 # Docker Harbor Deployment
+## **hostname**:`harbor.sunlge.com`
 ## **`Harbor Version`**:`1.7.0`
 ## **`Docker`版本:**`18.09.6`      
 ## **`docker-compose`版本:** 1.18.0  
@@ -12,8 +13,7 @@
 [root@harbor yum.repos.d]# wget https://raw.githubusercontent.com/sunlge/kubernetes/master/docker-ce.repo
 [root@harbor yum.repos.d]# wget https://raw.githubusercontent.com/sunlge/kubernetes/master/epel-testing.repo
 [root@harbor yum.repos.d]# wget https://raw.githubusercontent.com/sunlge/kubernetes/master/epel.repo
-[root@harbor yum.repos.d]# yum clean all
-[root@harbor yum.repos.d]# yum makecache
+[root@harbor yum.repos.d]# yum clean all && yum makecache
 [root@harbor yum.repos.d]# yum -y install docker-ce docker-compose
 [root@harbor yum.repos.d]# cd
 ```
@@ -33,7 +33,7 @@
 ```
 **2.根据私钥生成一个证书请求文件**  
 ```
-[root@harbor pki]# openssl req -new -key harbor.key  -out harbor.csr -subj "/C=bj/ST=bj/L=bj/O=sunlge/OU=Personal/CN=harbor.sunlge.com" -key harbor.key  -out harbor.csr
+[root@harbor pki]# openssl req -new -key harbor.key  -out harbor.csr -subj "/C=bj/ST=bj/L=bj/O=sunlge/OU=sunlge.com/CN=$HOSTNAME" -key harbor.key  -out harbor.csr
 ```
 
 **3.根据证书请求文件生成一个CA自签署证书即可**  
@@ -44,7 +44,7 @@
 **官方解释地址**[证书配置](https://docs.docker.com/engine/security/certificates/)
 ```
 [root@harbor pki]# openssl x509 -inform PEM -in harbor.crt -out harbor.cert
-[root@harbor pki]# mkdir  -p /etc/docker/certs.d/harbor.sunlge.com
+[root@harbor pki]# mkdir  -p /etc/docker/certs.d/$HOSTNAME
 [root@harbor pki]# cp -pf harbor.cert harbor.crt harbor.key /etc/docker/certs.d/harbor.sunlge.com/
 [root@harbor pki]# systemctl restart docker
 ```
