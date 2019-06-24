@@ -5,7 +5,7 @@
 ### **docker-compose 版本：**   `1.18.0`  
 ### **Harbor版本地址：**`https://github.com/goharbor/harbor/releases`
 ### **获取地址：** 
-          https://storage.googleapis.com/harbor-releases/release-1.7.0/harbor-offline-installer-v1.7.0.tgz
+        https://storage.googleapis.com/harbor-releases/release-1.7.0/harbor-offline-installer-v1.7.0.tgz
 ****
 ### 安装Docker,docker-compose
 ```
