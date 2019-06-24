@@ -46,5 +46,6 @@
     69  harbor_admin_password = Harbor12345               ##Harbor仓库的默认密码
  ```
 **直接执行harbor目录下install一键安装脚本即可**
-```[root@harbor harbor]# ./install.sh
+```
+[root@harbor harbor]# ./install.sh
 ```
