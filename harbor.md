@@ -10,9 +10,11 @@
 [root@harbor ~]# cd /etc/yum.repos.d/
 [root@harbor yum.repos.d]# wget https://raw.githubusercontent.com/sunlge/kubernetes/master/CentOS7-Base-163.repo
 [root@harbor yum.repos.d]# wget https://raw.githubusercontent.com/sunlge/kubernetes/master/docker-ce.repo
+[root@harbor yum.repos.d]# wget https://raw.githubusercontent.com/sunlge/kubernetes/master/epel-testing.repo
+[root@harbor yum.repos.d]# wget https://raw.githubusercontent.com/sunlge/kubernetes/master/epel.repo
 [root@harbor yum.repos.d]# yum clean all
 [root@harbor yum.repos.d]# yum makecache
-[root@harbor yum.repos.d]# yum -y install docker-ce docker-common
+[root@harbor yum.repos.d]# yum -y install docker-ce docker-compose
 [root@harbor yum.repos.d]# cd
 ```
 ### 安装Harbor
@@ -31,7 +33,7 @@
 ```
 **2.根据私钥生成一个证书请求文件**  
 ```
-[root@harbor pki]# openssl req -new -key harbor.key  -out harbor.csr -subj "/C=bj/ST=bj/L=bj/O=sunlge/OU=Personal/CN=harbor.sunlge.com" -key harbor.key  -out harbor.csr"
+[root@harbor pki]# openssl req -new -key harbor.key  -out harbor.csr -subj "/C=bj/ST=bj/L=bj/O=sunlge/OU=Personal/CN=harbor.sunlge.com" -key harbor.key  -out harbor.csr
 ```
 
 **3.根据证书请求文件生成一个CA自签署证书即可**  
@@ -52,7 +54,14 @@
 [root@harbor pki]# systemctl restart docker
 ```
 ```
-[root@harbor harbor]#  cat -n harbor.cfg | sed -n '8p;12p;24p;25p;28p;69p'
+[root@harbor pki]# cd ..
+[root@harbor harbor]# sed -ri "s/(^hostname =).*/\1 $HOSTNAME/" harbor.cfg
+[root@harbor harbor]# sed -ri "s/(^ui_url_protocol =).*/\1 https/" harbor.cfg
+[root@harbor harbor]# sed -ri "s@(^ssl_cert =).*@\1 /root/harbor/pki/harbor.crt@" harbor.cfg
+[root@harbor harbor]# sed -ri "s@(^ssl_cert_key =).*@\1 /root/harbor/pki/harbor.key@" harbor.cfg
+[root@harbor harbor]# sed -ri "s@(^secretkey_path =).*@\1 /root/harbor/pki@" harbor.cfg
+
+[root@harbor harbor]# cat -n harbor.cfg | sed -n '8p;12p;24p;25p;28p;69p'
      8  hostname = harbor.sunlge.com                      ##域名或者主机名
     12  ui_url_protocol = https                           ##http or https 协议
     24  ssl_cert = /root/harbor/pki/harbor.crt            ##证书目录，指定crt证书文件目录
