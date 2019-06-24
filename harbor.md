@@ -5,11 +5,14 @@
 ## **Harbor**版本地址：`https://github.com/goharbor/harbor/releases`
 **获取地址** `https://storage.googleapis.com/harbor-releases/release-1.7.0/harbor-offline-installer-v1.7.0.tgz`
 ****
+```
 [root@harbor ~]# wget https://storage.googleapis.com/harbor-releases/release-1.7.0/harbor-offline-installer-v1.7.0.tgz
 [root@harbor ~]# tar -zxf harbor-offline-installer-v1.7.0.tgz
 [root@harbor ~]# cd harbor/
+[root@harbor harbor]# mkdir pki
+```
 ### 制作证书，可以参考   [证书制作](https://github.com/sunlge/kubernetes/blob/master/program/build%20certificate.md)
-`[root@harbor harbor]# mkdir pki`  
+
 **制作一个私钥**
 ```
 [root@harbor harbor]#cd pki
@@ -43,4 +46,5 @@
     69  harbor_admin_password = Harbor12345               ##Harbor仓库的默认密码
  ```
 **直接执行harbor目录下install一键安装脚本即可**
-`[root@harbor harbor]# ./install.sh`
+```[root@harbor harbor]# ./install.sh
+```
