@@ -278,7 +278,7 @@ Environment="NO_PROXY=127.0.0.0/8,192.168.100.0/24"
 --cert-dir string                     ##加载证书文件目录 
 --config string			      ##加载配置文件
 
-10.禁用swap分区
+10.禁用swap分区(Node,Master节点都要做)
 [root@k8s1 ~]# swapoff -a
 [root@k8s1 ~]# sed -i "/swap/s/^/#/g"  /etc/fstab
 [root@k8s1 ~]# sed -n '/swap/p' /etc/fstab
@@ -296,6 +296,8 @@ KUBELET_EXTRA_ARGS="--fail-swap-on=false" ##swap开启时不让其出错
 	k8s.gcr.io/pause
 	quay.io/coreos/flannel
 [root@k8s1 ~]# for images in  $(kubeadm config images list |sed -nr "s#^k8s.*/(.*)#registry.cn-hangzhou.aliyuncs.com/google_containers/\1#p"); do docker pull $images; done
+[root@k8s1 ~]# docker images | grep ^registry.cn-han | awk '{print "docker tag",$1":"$2,$1":"$2}' | sed -e 's/registry.cn-hangzhou.aliyuncs.com\/google_containers/k8s.gcr.io/2' | sh -x
+[root@k8s1 ~]# docker images | grep ^registry.cn-han | awk '{print "docker rmi """$1""":"""$2}' | sh -x
 [root@k8s1 ~]# kubeadm init --kubernetes-version=v1.14.0 --pod-network-cidr=10.244.0.0/16 --service-cidr=10.96.0.0/12 --ignore-preflight-errors=Swap 
 
 12.执行生成的以下命令，如果没有生成则表示初始化失败
@@ -326,11 +328,21 @@ kubeadm token create --print-join-command
 
 14.配置Node节点
 [root@node1 ~]# yum -y install docker-ce-18.09.3 kubelet-1.14.0-0 kubeadm-1.14.0-0  //kubectl(可选_执行客户端程序)
-[root@node1 docker]# systemctl enable kubelet
-[root@node1 docker]# systemctl enable docker	
-[root@node1 docker]# systemctl start  docker
+[root@node1 ~]# systemctl enable kubelet
+[root@node1 ~]# systemctl enable docker	
+[root@node1 ~]# systemctl start  docker
+[root@node1 ~]# cat >> /images <<EOF 
+#k8s Node节点所镜像清单
+k8s.gcr.io/kube-proxy
+k8s.gcr.io/coredns
+k8s.gcr.io/pause
+EOF
+[root@node1 ~]# for i in $(cat images |sed -nr "s#^k8s.*/(.*)#registry.cn-hangzhou.aliyuncs.com/google_containers/\1#p"); do docker pull $images; done
+[root@node1 ~]#  docker images | grep registry.cn-hangzhou.aliyuncs.com/google_containers | awk '{print "docker tag",$1":"$2,$1":"$2}' | sed -e 's/registry.cn-hangzhou.aliyuncs.com\/google_containers/k8s.gcr.io/2' | sh -x
+[root@node1 ~]#  docker images | grep registry.cn-hangzhou.aliyuncs.com/google_containers | awk '{print "docker rmi """$1""":"""$2}' | sh -x
 [root@node1 docker]# kubeadm join 192.168.65.60:6443 --token s0g7pn.qnnbjzhiwk74hidp     --discovery-token-ca-cert-hash sha256:298278ac5e27bfa51224a9a34eaf19aa24e89424c99f511fb77d03a118f1897b	
-##master上执行
+
+15.master上执行
 wget https://raw.githubusercontent.com/sunlge/kubernetes/k8s-1.14.0/program/kubernetes_install/kube-flannel.yml
 kubectl apply -f kube-flannel.yml
 根据以下说明对kube-flannel.yml文件进行修改：
@@ -345,3 +357,15 @@ kubectl apply -f kube-flannel.yml
         - --ip-masq
         - --kube-subnet-mgr
         - --iface=eth1
+16.Master执行命令，下面是Tab补全
+[root@k8s1 ~]# cat >> /root/.bashrc <<EOF
+source <(kubeadm completion bash)
+source <(kubectl completion bash)
+EOF
+##查看相关节点，已经是Ready状态
+[root@k8s1 ~]# kubectl get nodes
+NAME                STATUS   ROLES    AGE   VERSION
+master.sunlge.com   Ready    master   75m   v1.14.0
+node01.sunlge.com   Ready    <none>   42m   v1.14.0
+
+```
