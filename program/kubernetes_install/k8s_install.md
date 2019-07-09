@@ -22,7 +22,8 @@
 
 	kubelet 的主要功能就是:
 	定时从某个地方获取节点上 pod/container 的期望状态（运行什么容器、运行的副本数量、网络或者存储如何配置等等），并调用对应的容器平台接口达到这个状态
-	集群状态下，kubelet 会从 master 上读取信息，但其实 kubelet 还可以从其他地方获取节点的 pod 信息。目前 kubelet 支持三种数据源：
+	集群状态下，kubelet 会从 master 上读取信息，但其实 kubelet 还可以从其他地方获取节点的 pod 信息。
+	目前 kubelet 支持三种数据源：
 		本地文件
 		通过 url 从网络上某个地址来获取信息
 		API Server：从 kubernetes master 节点获取信息
