@@ -1,39 +1,36 @@
-K8s中文社区文档：
-	http://docs.kubernetes.org.cn/230.html
+# Kubernetes的基本介绍与安装
+## K8s中文社区文档：
+	[中文社区](http://docs.kubernetes.org.cn/230.html)
  
-官方网站：
-	https://kubernetes.io/docs/reference/setup-tools/kubeadm/kubeadm-init/
+## 官方网站：
+	[官网链接](https://kubernetes.io/docs/reference/setup-tools/kubeadm/kubeadm-init/)
 	
-GitHub有源码地址和release地址
-	https://github.com/kubernetes/kubernetes/
-	
-https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG-1.13.md 对应下载地址
-
-阿里的官方文档：
-	https://help.aliyun.com/document_detail/25975.html?spm=5176.54417.668253.btn21cs.637f2459l0k0Mx
+## GitHub有源码地址和release地址:  
+	[Git Hub](https://github.com/kubernetes/kubernetes/)  
+	[获取地址](https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG-1.13.md) #对应下载地址
 
 
-单词:
-	舵手：kubernetes
+
+**单词:**
+	舵手：kubernetes	
+	kubeadm config images list	##获取k8s所需版本镜像
 	
-kubeadm config images list	##获取k8s所需版本镜像
+## 概念介绍	
+**云原生：**
+	在一般用法中，**云原生**是一种构建和运行应用程序的方法，它利用了云计算交付模型的优势。**云原生**是关于如何创建和部署应用程序，和位置无关。 这意味着应用程序位于云中，而不是传统数据中心。
 	
-	
-云原生：
-	在一般用法中，“云原生”是一种构建和运行应用程序的方法，它利用了云计算交付模型的优势。“云原生”是关于如何创建和部署应用程序，和位置无关。 这意味着应用程序位于云中，而不是传统数据中心。
-	
-kubernetes设计理念：
-	API设计原则
+**kubernetes设计理念：**
+	`API`设计原则：
 		声明式的
 	控制机设计原则
 	
-DevOps是什么？
-	一种文化和思想，将运维开发产品更好的柔和到一起。参考下列内容
-	CI：持续集成
-		项目上线之前：
-			做方案，计划 --> 架构设计 --> 开发 --> 构建 --> 测试
-				开发代码之后的过程称之为CI
-				构建过程可以通过工具完成，所谓的maven之类的工具
+**`DevOps`是什么？**
+	一种文化和思想，将运维开发产品更好的柔和到一起。参考下列内容  
+	CI：持续集成  
+		项目上线之前： 
+			做方案，计划 --> 架构设计 --> 开发 --> 构建 --> 测试  
+				开发代码之后的过程称之为`CI`  
+				构建过程可以通过工具完成，所谓的`maven`之类的工具  
 				
 		单元测试：
 			开发者自测代码，保证各自的代码能够正常工作
