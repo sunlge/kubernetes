@@ -1,5 +1,5 @@
 # Kubernetes 安装部署
-	
+
 **k8s_master组件介绍：**
 
 	API Server：
@@ -280,3 +280,8 @@ master.sunlge.com   Ready    master   75m   v1.14.0
 node01.sunlge.com   Ready    <none>   42m   v1.14.0
 
 ```
+**Kubernetes相关资源说明:**
+
+[参考链接](https://github.com/sunlge/kubernetes/blob/k8s-1.14.0/program/README.md)
+
+
