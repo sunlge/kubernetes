@@ -102,6 +102,7 @@ EOF
 {
   "registry-mirrors": ["https://nw1puivx.mirror.aliyuncs.com"]	##可以自己在阿里云申请一个镜像加速器
 }
+EOF
 ```
 
 **4.Service模型简单介绍：**
