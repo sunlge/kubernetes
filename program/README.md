@@ -1,4 +1,4 @@
-# Kubernetes的基本介绍与安装
+# Kubernetes的基本介绍
 ## Kubernetes简介
 Kubernetes简称k8s,如果你还没有了解k8s并且想要深入理解它，那么你可以参考[中文社区](http://docs.kubernetes.org.cn/230.html)，[官网链接](https://kubernetes.io/docs/reference/setup-tools/kubeadm/kubeadm-init/), [Git Hub](https://github.com/kubernetes/kubernetes/) [GitHub 获取地址](https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG-1.13.md) #对应下载地址
 
