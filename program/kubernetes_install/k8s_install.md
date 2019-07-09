@@ -91,16 +91,21 @@ enabled=1
 }
 ```
 
-4.Service模型简单介绍：
+**4.Service模型简单介绍：**
+---
+```
 	userspace 	1.1-
 		依赖于Iptables。
 	iptables 	1.10-
 	IP_vs 		1.10+
 		需要添加专门的选项，如果没有则自动降级为Iptables。
 		编辑Kubelet的配置文件/etc/sysconfig/kubelet
-			KUBE_PROXY_MODE=ipvs
-			
-5.加载模块(如果不使用ipvs模式可掠过。)
+			KUBE_PROXY_MODE=ipvs	
+```
+
+**5.加载模块(如果不使用ipvs模式可掠过。)**
+---
+```
 [root@master ~]# modprobe br_netfilter
 #使用Ip_vs
 	modprobe ip_vs
@@ -114,20 +119,28 @@ enabled=1
 1
 [root@k8s1 ~]# cat /proc/sys/net/bridge/bridge-nf-call-iptables 
 1
+```
 
-6.设置Docker 代理(自己装镜像，可以省略下面步骤。)此处略过就行
+**6.设置Docker 代理(自己装镜像，可以省略下面步骤。)此处略过即可**
+---
+```
 [root@k8s1 ~]# vim /usr/lib/systemd/system/docker.service 
 Environment="HTTPS_PROXY=http://www.ik8s.io:10080"
 Environment="NO_PROXY=127.0.0.0/8,192.168.100.0/24"
-
-7.生成配置文件检查
+```
+**7.生成配置文件检查**
+---
+```
 [root@k8s1 ~]# rpm -ql kubelet
 ##清单目录 /etc/kubernetes/manifests
 ##配置文件 /etc/sysconfig/kubelet
 ##untli file /etc/systemd/system/kubelet.service
 ##主程序   /usr/bin/kubelet
+```
 
-8.启动kubernetes的相关组件
+**8.启动kubernetes的相关组件**
+---
+```
 [root@k8s1 ~]# systemctl stop firewalld
 [root@k8s1 ~]# systemctl disable firewalld
 [root@k8s1 ~]# systemctl enable !$
@@ -135,24 +148,31 @@ Environment="NO_PROXY=127.0.0.0/8,192.168.100.0/24"
 [root@k8s1 ~]# systemctl start kubelet
 [root@k8s1 ~]# systemctl enable docker
 [root@k8s1 ~]# systemctl start !$
-
-9.初始化参数介绍
+```
+**9.初始化参数介绍**
+---
+```
 [root@k8s1 ~]# kubeadm init --help
 
 --apiserver-advertise-address string  ##自己的监听地址
 --apiserver-bind-port int32	      ##监听端口，默认6443
 --cert-dir string                     ##加载证书文件目录 
 --config string			      ##加载配置文件
-
-10.禁用swap分区(Node,Master节点都要做)
+```
+**10.禁用swap分区(Node,Master节点都要做)**
+---
+```
 [root@k8s1 ~]# swapoff -a
 [root@k8s1 ~]# sed -i "/swap/s/^/#/g"  /etc/fstab
 [root@k8s1 ~]# sed -n '/swap/p' /etc/fstab
 #/dev/mapper/centos-swap swap                    swap    defaults        0 0
 [root@k8s1 ~]# vim /etc/sysconfig/kubelet
 KUBELET_EXTRA_ARGS="--fail-swap-on=false" ##swap开启时不让其出错
+```
 
-11.提前将镜像下载到本地,下面几个镜像是必须的.
+**11.提前将镜像下载到本地,下面几个镜像是必须的.**
+---
+```
 ##使用命令 kubeadm config images list 查看
 	k8s.gcr.io/kube-proxy 
 	k8s.gcr.io/kube-apiserver          
@@ -165,13 +185,19 @@ KUBELET_EXTRA_ARGS="--fail-swap-on=false" ##swap开启时不让其出错
 [root@k8s1 ~]# docker images | grep ^registry.cn-han | awk '{print "docker tag",$1":"$2,$1":"$2}' | sed -e 's/registry.cn-hangzhou.aliyuncs.com\/google_containers/k8s.gcr.io/2' | sh -x
 [root@k8s1 ~]# docker images | grep ^registry.cn-han | awk '{print "docker rmi """$1""":"""$2}' | sh -x
 [root@k8s1 ~]# kubeadm init --kubernetes-version=v1.14.0 --pod-network-cidr=10.244.0.0/16 --service-cidr=10.96.0.0/12 --ignore-preflight-errors=Swap 
+```
 
-12.执行生成的以下命令，如果没有生成则表示初始化失败
+**12.执行生成的以下命令，如果没有生成则表示初始化失败**
+---
+```
 mkdir -p $HOME/.kube
 sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 sudo chown $(id -u):$(id -g) $HOME/.kube/config
+```
 
-13.将生成的以下命令保存，Node节点可以用它加入集群
+**13.将生成的以下命令保存，Node节点可以用它加入集群**
+---
+```
 kubeadm join 192.168.65.60:6443 --token s0g7pn.qnnbjzhiwk74hidp \
     --discovery-token-ca-cert-hash sha256:298278ac5e27bfa51224a9a34eaf19aa24e89424c99f511fb77d03a118f1897b
 过期后创建新的可参考：
@@ -191,8 +217,11 @@ kubeadm token create --print-join-command
 	
 ##全部装载完成之后：
 	会监听一个6443的端口
+```
 
-14.配置Node节点
+**14.配置Node节点**
+---
+```
 [root@node1 ~]# yum -y install docker-ce-18.09.3 kubelet-1.14.0-0 kubeadm-1.14.0-0  //kubectl(可选_执行客户端程序)
 [root@node1 ~]# systemctl enable kubelet
 [root@node1 ~]# systemctl enable docker	
@@ -207,8 +236,11 @@ EOF
 [root@node1 ~]#  docker images | grep registry.cn-hangzhou.aliyuncs.com/google_containers | awk '{print "docker tag",$1":"$2,$1":"$2}' | sed -e 's/registry.cn-hangzhou.aliyuncs.com\/google_containers/k8s.gcr.io/2' | sh -x
 [root@node1 ~]#  docker images | grep registry.cn-hangzhou.aliyuncs.com/google_containers | awk '{print "docker rmi """$1""":"""$2}' | sh -x
 [root@node1 docker]# kubeadm join 192.168.65.60:6443 --token s0g7pn.qnnbjzhiwk74hidp     --discovery-token-ca-cert-hash sha256:298278ac5e27bfa51224a9a34eaf19aa24e89424c99f511fb77d03a118f1897b	
+```
 
-15.master上执行
+**15.master上执行**
+---
+```
 wget https://raw.githubusercontent.com/sunlge/kubernetes/k8s-1.14.0/program/kubernetes_install/kube-flannel.yml
 kubectl apply -f kube-flannel.yml
 根据以下说明对kube-flannel.yml文件进行修改：
@@ -223,7 +255,10 @@ kubectl apply -f kube-flannel.yml
         - --ip-masq
         - --kube-subnet-mgr
         - --iface=eth1
-16.Master执行命令，下面是Tab补全
+```
+**16.Master执行命令，下面是Tab补全**
+---
+```
 [root@k8s1 ~]# cat >> /root/.bashrc <<EOF
 source <(kubeadm completion bash)
 source <(kubectl completion bash)
