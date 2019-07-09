@@ -1,108 +1,84 @@
 # Kubernetes的基本介绍与安装
-## K8s中文社区文档：
-	[中文社区](http://docs.kubernetes.org.cn/230.html)
- 
-## 官方网站：
-	[官网链接](https://kubernetes.io/docs/reference/setup-tools/kubeadm/kubeadm-init/)
-	
-## GitHub有源码地址和release地址:  
-	[Git Hub](https://github.com/kubernetes/kubernetes/)  
-	[获取地址](https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG-1.13.md) #对应下载地址
+## Kubernetes简介
+Kubernetes简称k8s,如果你还没有了解k8s并且想要深入理解它，那么你可以参考[中文社区](http://docs.kubernetes.org.cn/230.html)，[官网链接](https://kubernetes.io/docs/reference/setup-tools/kubeadm/kubeadm-init/), [Git Hub](https://github.com/kubernetes/kubernetes/) [GitHub 获取地址](https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG-1.13.md) #对应下载地址
 
+**单词:**  
+	`舵手：kubernetes`    
+	
+## 相关概念介绍	 
 
+**理解云原生：**
 
-**单词:**
-	舵手：kubernetes	
-	kubeadm config images list	##获取k8s所需版本镜像
+	在一般用法中，云原生是一种构建和运行应用程序的方法，它利用了云计算交付模型的优势。云原生是关于如何创建和部署应用程序，和位置无关。 这意味着应用程序位于云中，而不是传统数据中心.  
 	
-## 概念介绍	
-**云原生：**
-	在一般用法中，**云原生**是一种构建和运行应用程序的方法，它利用了云计算交付模型的优势。**云原生**是关于如何创建和部署应用程序，和位置无关。 这意味着应用程序位于云中，而不是传统数据中心。
-	
-**kubernetes设计理念：**
-	`API`设计原则：
-		声明式的
-	控制机设计原则
-	
-**`DevOps`是什么？**
+**理解DevOps**
+
 	一种文化和思想，将运维开发产品更好的柔和到一起。参考下列内容  
 	CI：持续集成  
 		项目上线之前： 
 			做方案，计划 --> 架构设计 --> 开发 --> 构建 --> 测试  
-				开发代码之后的过程称之为`CI`  
-				构建过程可以通过工具完成，所谓的`maven`之类的工具  
+				开发代码之后的过程称之为CI  
+				构建过程可以通过工具完成，所谓的maven之类的工具  
 				
 		单元测试：
 			开发者自测代码，保证各自的代码能够正常工作
 			
-	CD：持续交付，Delivery
+	CD：持续交付，Delivery.
 		将测试好以后打包的最终产品自动实现交给运维就是持续交付
 		
-	CD：持续部署，Deployment
+	CD：持续部署，Deployment.
 		自动将产品进行上线或投入生产环境中称之为CD。
 
-命令式：
-	返回结果，命令执行成功之后才会返回结果
-声明使：
-	不需要结果，你只需要声明你所期望的状态就好。
+**kubernetes设计理念：**
 
-
-相关概念网址：
-	https://help.aliyun.com/document_detail/25975.html?spm=5176.54417.668253.btn21cs.637f2459l0k0Mx
-
-Kubernetes：
-	自动装箱，自动修复，水平扩展，服务发现和负载均衡，自动发布和回滚
-	密钥和配置管理，存储编排，批量处理执行任务
-	通过http或者https的一个API接口对外提供服务
+	API设计原则： 
+		声明式的：
+	           不需要结果，你只需要声明你所期望的状态就好。
+	控制机设计原则 
+		命令式：
+		   返回结果，命令执行成功之后才会返回结果
 	
-相关概念：		
-	Pod：
-		k8s中最小的调度逻辑单元，一个Pod封装多个应用容器（也可以只有一个容器）、存储资源、一个独立的网络 IP 以及管理控制容器运行方式的策略选项。
-	
+## Kubernetes资源介绍
+	容器中的六种中名称空间：
+		UTS：		主机名和域名
+		IPC：		信号量，消息队列和共享内存
+		PID：		进程编号
+		Network：	网络设备，网络栈，端口等
+		Mount：		挂载点(文件系统)
+		User：		用户和用户组
+		
+	Pod：(有生命周期的对象)
+	  k8s中最小的调度逻辑单元，一个Pod封装多个应用容器（也可以只有一个容器）、存储资源、一个独立的网络 IP 以及管理控制容器运行方式的策略选项。
+	  三种运行模式：
+	   	自主式Pod
+	  	控制器管理的Pod
+	  	eplicationController(副本控制器)			
+	  
+	  一个Pod可以拥有多个容器，共享同一个底层的网络名称空间：
+		Net UTS IPC这是共享的		
+	  多个容器互相隔离的资源：
+		User Mount PID 		
+	  还可以去共享存储卷；
+		
+	  需要在Pod上放多个容器时；
+		主容器，相当于一个Pod上的master(程序)
+		辅助的容器，去辅助主容器(程序)完成工作。
+		
+	  一个Pod里的所有容器只能运行在一个node上的这个Pod里。				
+		为了实现Pod的识别，需要在Pod之上附加一些元数据；	
+		拥有一个类似于一个Key值，这个Key值必须是value的这种概念。否则就不是这个Pod。
+		根据selector(标签选择器去选择)
 		Pod，Label，Label Selector 标签选择器
 			Label：key=value
 			Label Selector：
-		
-		Pod：(有生命周期的对象)
-			自主式Pod
-			控制器管理的Pod
-				ReplicationController(副本控制器)
-			
-		一个Pod可以拥有多个容器，共享同一个底层的网络名称空间
-			Net UTS IPC这是共享的，下面是互相隔离的
-			
-			互相隔离：
-				User Mount PID 
-		
-		还可以去共享存储卷；
-		
-		需要在Pod上放多个容器时；
-			主容器，相当于一个Pod上的master(程序)
-			辅助的容器，去辅助主容器(程序)完成工作。
-		
-		一个Pod里的所有容器只能运行在一个node上的这个Pod里。	
-			
-		为了实现Pod的识别，需要在Pod之上附加一些元数据；	
-			拥有一个类似于一个Key值，这个Key值必须是value的这种概念。否则就不是这个Pod。
-				根据selector(标签选择器去选择)
-		
-			
-			六种中名称空间：
-				UTS：		主机名和域名
-				IPC：		信号量，消息队列和共享内存
-				PID：		进程编号
-				Network：	网络设备，网络栈，端口等
-				Mount：		挂载点(文件系统)
-				User：		用户和用户组	
-		
+					
 	副本控制器(Replication Controller，RC)
-		RC 确保任何时候 Kubernetes 集群中有指定数量的 pod 副本(replicas)在运行。通过监控运行中的 Pod 来保证集群中运行指定数目的 Pod 副本。指定的数目可以是多个也可以是1个；少于指定数目，RC 就会启动运行新的 Pod 副本；多于指定数目，RC 就会终止多余的 Pod 副本。
+		RC 确保任何时候 Kubernetes 集群中有指定数量的 pod 副本(replicas)在运行。通过监控运行中的 Pod 来保证集群中运行指定数目的 Pod 副		本。指定的数目可以是多个也可以是1个；少于指定数目，RC 就会启动运行新的 Pod 副本；多于指定数目，RC 就会终止多余的 Pod 副本。
 		
 	副本集（Replica Set，RS）
 		ReplicaSet（RS）是 RC 的升级版本，唯一区别是对选择器的支持，RS 能支持更多种类的匹配模式。副本集对象一般不单独使用，而是作为 Deployment 的理想状态参数使用。
-
 		
-	部署（Deployment）
+	Deployment控制器（Deployment）
 		部署表示用户对 Kubernetes 集群的一次更新操作。部署比 RS 应用更广，可以是创建一个新的服务，更新一个新的服务，也可以是滚动升级一个服务。滚动升级一个服务，实际是创建一个新的 RS，然后逐渐将新 RS 中副本数增加到理想状态，将旧 RS 中的副本数减小到 0的复合操作；这样一个复合操作用一个RS是不太好描述的，所以用一个更通用的 Deployment 来描述。不建议您手动管理利用 Deployment 创建的 RS。
 
 	服务（Service）
@@ -118,8 +94,11 @@ Kubernetes：
 		PV 和 PVC 使得 Kubernetes 集群具备了存储的逻辑抽象能力，使得在配置 Pod 的逻辑里可以忽略对实际后台存储技术的配置，而把这项配置的工作交给 PV 的配置者。存储的 PV 和 PVC 的这种关系，跟计算的 Node 和 Pod 的关系是非常类似的；PV 和 Node 是资源的提供者，根据集群的基础设施变化而变化，由 Kubernetes 集群管理员配置；而 PVC 和 Pod是资源的使用者，根据业务服务的需求变化而变化，由 Kubernetes 集群的使用者即服务的管理员来配置。
 
 	Ingress
-		Ingress 是授权入站连接到达集群服务的规则集合。你可以通过 Ingress 配置提供外部可访问的 URL、负载均衡、SSL、基于名称的虚拟主机等。用户通过 POST Ingress 资源到 API server 的方式来请求 ingress。 Ingress controller 负责实现 Ingress，通常使用负载均衡器，它还可以配置边界路由和其他前端，这有助于以 HA 方式处理流量。
+		简单的说，ingress就是从kubernetes集群外访问集群的入口，将用户的URL请求转发到不同的service上。Ingress相当于nginx、apache等负载均衡方向代理服务器，其中还包括规则定义，即URL的路由信息，路由信息得的刷新由Ingress controller来提供。
 		
+		Ingress 是授权入站连接到达集群服务的规则集合。你可以通过 Ingress 配置提供外部可访问的 URL、负载均衡、SSL、基于名称的虚拟主机等。用户通过 POST Ingress 资源到 API server 的方式来请求 ingress。 Ingress controller 负责实现 Ingress，通常使用负载均衡器，它还可以配置边界路由和其他前端，这有助于以 HA 方式处理流量。通常用来做七层代理。
+	Ingress Controller：
+		Ingress Controller 实质上可以理解为是个监视器，Ingress Controller 通过不断地跟 kubernetes API 打交道，实时的感知后端 service、pod 等变化，比如新增和减少 pod，service 增加与减少等；当得到这些变化信息后，Ingress Controller 再结合下文的 Ingress 生成配置，然后更新反向代理负载均衡器，并刷新其配置，达到服务发现的作用。	
 k8s_master组件：
 	API Server：
 		负责接受、解析、处理请求；
