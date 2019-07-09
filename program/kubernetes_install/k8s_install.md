@@ -244,9 +244,9 @@ kubeadm token create --print-join-command
 [root@node1 ~]# systemctl start  docker
 [root@node1 ~]# cat >> images <<EOF 
 #k8s Node节点所镜像清单
-k8s.gcr.io/kube-proxy
-k8s.gcr.io/coredns
-k8s.gcr.io/pause
+k8s.gcr.io/kube-proxy:v1.14.0
+k8s.gcr.io/coredns:1.3.1
+k8s.gcr.io/pause:3.1
 EOF
 [root@node1 ~]# for i in $(cat images |sed -nr "s#^k8s.*/(.*)#registry.cn-hangzhou.aliyuncs.com/google_containers/\1#p"); do docker pull $images; done
 [root@node1 ~]#  docker images | grep registry.cn-hangzhou.aliyuncs.com/google_containers | awk '{print "docker tag",$1":"$2,$1":"$2}' | sed -e 's/registry.cn-hangzhou.aliyuncs.com\/google_containers/k8s.gcr.io/2' | sh -x
