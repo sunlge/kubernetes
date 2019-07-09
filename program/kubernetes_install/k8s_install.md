@@ -116,6 +116,26 @@ Pod是k8s中最小的调度逻辑单元，一个Pod封装多个应用容器（�
 
   `Ingress Controller` 实质上可以理解为是个监视器，`Ingress Controller` 通过不断地跟 `kubernetes API` 打交道，实时的感知后端 service、pod 等变化，比如新增和减少 pod，service 增加与减少等；当得到这些变化信息后，Ingress Controller 再结合下文的 Ingress 生成配置，然后更新反向代理负载均衡器，并刷新其配置，达到服务发现的作用。  
 
+**高级调度节点特性：**
+
+  节点亲和性/反亲和性特性、Pod亲和性/反亲和性特性、污点和容忍特性、报告节点问题特性。
+	
+**污点和容忍：**
+
+  污点和容忍（Taints and tolerations）在一起工作，目的是确保Pod不会被调度到不正确的节点上。通过给节点设置污点，可以标识出这些节点不接受任何Pod，这些Pod不能容忍任何污点。也可以通过给Pod设置容忍，让这些Pod部署到能够容忍污点的节点上。
+	
+**API server组件：**
+
+  在 `kubernetes` 集群中，`API Server` 有着非常重要的角色。`API Server` 负责和 `etcd` 交互（其他组件不会直接操作 etcd(DB)，只有 API Server 这么做），是整个 kubernetes 集群的数据中心，所有的交互都是以 API Server 为核心的。
+```  
+  简单来说，API Server 提供了一下的功能：  
+	整个集群管理的 API 接口：
+	所有对集群进行的查询和管理都要通过 API 来进行集群内部各个模块之间通信的枢纽：
+	所有模块之前并不会之间互相调用，而是通过和 API Server 打交道来完成自己那部分的工作
+```
+
+**k8s核心概念：**   [参考博客](http://www.cnblogs.com/zhenyuyaodidiao/p/6500720.html)
+	
 **k8s_master组件：**
 
 	API Server：
@@ -169,12 +189,11 @@ Pod是k8s中最小的调度逻辑单元，一个Pod封装多个应用容器（�
 	flannel：网络配置
 	calico：网络配置，网络策略；
 	canel：两者结合体
-·		
-
-**k8s相关镜像获取地址**
+	
+·**k8s相关镜像获取地址**
 
   可以去Docker Hub上的 [mirrorgooglecontainers](https://hub.docker.com/search/?q=mirrorgooglecontainers&type=image) 获取k8s相关镜像。  
-也可以在Git Hub写Dockerfile文件，然后在Docker Hub上去构建。[参考链接](https://blog.csdn.net/shida_csdn/article/details/78480241)
+也可以在Git Hub写Dockerfile文件，然后在Docker Hub上去构建。[参考链接](https://blog.csdn.net/shida_csdn/article/details/78480241)		
 	
 **kubeadm安装**
 
@@ -184,7 +203,7 @@ Pod是k8s中最小的调度逻辑单元，一个Pod封装多个应用容器（�
 
 ## 开始部署
 ```
-1.配置yum节点，阿里的
+1.配置yum节点，阿里的。(Master，Node节点都要做)
 [root@k8s1 yum.repos.d]# vim k8s.repo 
 [kubernetes]
 name=k8s Repo
@@ -193,7 +212,7 @@ gpgcheck=1
 gpgkey=https://mirrors.aliyun.com/kubernetes/yum/doc/yum-key.gpg
 enabled=1
 
-2.解决密钥报错问题
+2.解决密钥报错问题。(Master，Node节点都要做)
 [root@k8s1 ~]# wget https://mirrors.aliyun.com/kubernetes/yum/doc/yum-key.gpg
 [root@k8s1 ~]# wget https://mirrors.aliyun.com/kubernetes/yum/doc/rpm-package-key.gpg
 [root@k8s1 ~]# rpm --import yum-key.gpg rpm-package-key.gpg
@@ -242,11 +261,12 @@ Environment="NO_PROXY=127.0.0.0/8,192.168.100.0/24"
 ##untli file /etc/systemd/system/kubelet.service
 ##主程序   /usr/bin/kubelet
 
-8.启动相关k8s服务
-[root@k8s1 ~]# systemctl start kubelet
-[root@k8s1 ~]# systemctl status kubelet
-[root@k8s1 ~]# systemctl stop kubelet
+8.启动kubernetes的相关组件
+[root@k8s1 ~]# systemctl stop firewalld
+[root@k8s1 ~]# systemctl disable firewalld
 [root@k8s1 ~]# systemctl enable !$
+[root@k8s1 ~]# systemctl status kubelet
+[root@k8s1 ~]# systemctl start kubelet
 [root@k8s1 ~]# systemctl enable docker
 [root@k8s1 ~]# systemctl start !$
 
@@ -259,93 +279,69 @@ Environment="NO_PROXY=127.0.0.0/8,192.168.100.0/24"
 --config string			      ##加载配置文件
 
 10.禁用swap分区
-[root@k8s1 ~]# cat /etc/sysconfig/kubelet
+[root@k8s1 ~]# swapoff -a
+[root@k8s1 ~]# sed -i "/swap/s/^/#/g"  /etc/fstab
+[root@k8s1 ~]# sed -n '/swap/p' /etc/fstab
+#/dev/mapper/centos-swap swap                    swap    defaults        0 0
+[root@k8s1 ~]# vim /etc/sysconfig/kubelet
 KUBELET_EXTRA_ARGS="--fail-swap-on=false" ##swap开启时不让其出错
 
-[root@k8s1 ~]# kubeadm init --kubernetes-version=v1.14.0 --pod-network-cidr=10.244.0.0/16 --service-cidr=10.96.0.0/12 --ignore-preflight-errors=Swap 
-
-##关于绑定网卡问题：
-	https://k8smeetup.github.io/docs/reference/setup-tools/kubeadm/kubeadm-init
-	
-当运行 init 时，您必须保证指定一个内部 IP 作为 API server 的绑定地址，例如：
-	kubeadm init --apiserver-advertise-address=<private-master-ip>
-
-当工作 node 配置好后，添加一个指定工作 node 私有 IP 的参数到 /etc/systemd/system/kubelet.service.d/10-kubeadm.conf 中：
-	--node-ip=<private-node-ip>
-
-##可以去/etc/fstab中注释点swap分区
-	并且使用 
-		swapoff -a 临时关闭
-
-
-##初始化时，下面几个镜像是必须的
+11.提前将镜像下载到本地,下面几个镜像是必须的.
 ##使用命令 kubeadm config images list 查看
 	k8s.gcr.io/kube-proxy 
 	k8s.gcr.io/kube-apiserver          
 	k8s.gcr.io/kube-controller-manager   
 	k8s.gcr.io/kube-scheduler           
 	k8s.gcr.io/etcd       
-	k8s.gcr.io/pause 
+	k8s.gcr.io/pause
+	quay.io/coreos/flannel
+[root@k8s1 ~]# for images in  $(kubeadm config images list |sed -nr "s#^k8s.*/(.*)#registry.cn-hangzhou.aliyuncs.com/google_containers/\1#p"); do docker pull $images; done
+[root@k8s1 ~]# kubeadm init --kubernetes-version=v1.14.0 --pod-network-cidr=10.244.0.0/16 --service-cidr=10.96.0.0/12 --ignore-preflight-errors=Swap 
 
+12.执行生成的以下命令，如果没有生成则表示初始化失败
+mkdir -p $HOME/.kube
+sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+13.将生成的以下命令保存，Node节点可以用它加入集群
+kubeadm join 192.168.65.60:6443 --token s0g7pn.qnnbjzhiwk74hidp \
+    --discovery-token-ca-cert-hash sha256:298278ac5e27bfa51224a9a34eaf19aa24e89424c99f511fb77d03a118f1897b
+过期后创建新的可参考：
+	https://blog.csdn.net/mailjoin/article/details/79686934
+	
+在过期以后，下面的命令会自动重新生成一个token，并且产生一条命令。生成以后直接复制即可。	
+kubeadm token create --print-join-command
+    
+##关于绑定网卡问题可以参考：
+	https://k8smeetup.github.io/docs/reference/setup-tools/kubeadm/kubeadm-init
+	
+当运行 init 时，您必须保证指定一个内部 IP 作为 API server 的绑定地址，例如：(可以忽略)
+	kubeadm init --apiserver-advertise-address=<private-master-ip>
+	
+当工作节点 Node 配置好后，添加一个指定工作 Node节点 私有的 IP 的参数到 /etc/systemd/system/kubelet.service.d/10-kubeadm.conf 中：(可以忽略)
+	--node-ip=<private-node-ip>
 	
 ##全部装载完成之后：
 	会监听一个6443的端口
 
-##暂时保存一下	
-kubeadm join 192.168.100.141:6443 --token azxxhb.g5yoxis2utyq5qjl --discovery-token-ca-cert-hash sha256:f4c67847488d4bdbd166ead4367598f115ca961b44ebc3836e89fc9c1594d442 --ignore-preflight-errors=Swap
-	过期后创建新的：
-		https://blog.csdn.net/mailjoin/article/details/79686934
-
-##下面的命令会自动重新生成一个token，并且产生一条命令。生成以后直接复制即可。	
-kubeadm token create --print-join-command
-
-
-kubeadm join 192.168.100.10:6443 --token diytzd.hnivfvkb6ursbqhq \
-    --discovery-token-ca-cert-hash sha256:b12e4eaefd11445f698b164a3e56fd2a89657c30a8cf3246af01d843fc86d278 
-
-
-##节点安装
-[root@k8s2 ~]# yum -y install docker-ce-18.09.3 kubelet-1.14.0-0 kubeadm-1.14.0-0  //kubectl(可选_执行客户端程序)
+14.配置Node节点
+[root@node1 ~]# yum -y install docker-ce-18.09.3 kubelet-1.14.0-0 kubeadm-1.14.0-0  //kubectl(可选_执行客户端程序)
 [root@node1 docker]# systemctl enable kubelet
 [root@node1 docker]# systemctl enable docker	
 [root@node1 docker]# systemctl start  docker
-	
-	
-	
-部署：flannel
-	官方文档建议：
-		https://github.com/coreos/flannel
-
+[root@node1 docker]# kubeadm join 192.168.65.60:6443 --token s0g7pn.qnnbjzhiwk74hidp     --discovery-token-ca-cert-hash sha256:298278ac5e27bfa51224a9a34eaf19aa24e89424c99f511fb77d03a118f1897b	
 ##master上执行
-执行一条命令：
+wget https://raw.githubusercontent.com/sunlge/kubernetes/k8s-1.14.0/program/kubernetes_install/kube-flannel.yml
+kubectl apply -f kube-flannel.yml
+根据以下说明对kube-flannel.yml文件进行修改：
 	最好先将yml文件下载下来，之后在用apply去声明它。
-	kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
+	官网的地址：
+		https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
 	由于flannel使用默认路由的网卡接口，导致适用了外网网卡，致使pod之间无法访问。
-	所以需要指定使用相应网卡。在command参数增加--iface=eth1即可，具体配置如下
-		  command:
+	所以需要指定使用相应网卡。如果内网网卡为eth1，那么在command参数增加--iface=eth1即可，具体配置如下
+	command:
         - /opt/bin/flanneld
         args:
         - --ip-masq
         - --kube-subnet-mgr
         - --iface=eth1
-
-
-高级调度节点特性：
-	节点亲和性/反亲和性特性、Pod亲和性/反亲和性特性、污点和容忍特性、报告节点问题特性。
-	
-污点和容忍：
-	污点和容忍（Taints and tolerations）在一起工作，目的是确保Pod不会被调度到不正确的节点上。通过给节点设置污点，可以标识出这些节点不接受任何Pod，这些Pod不能容忍任何污点。也可以通过给Pod设置容忍，让这些Pod部署到能够容忍污点的节点上。
-	
-API server组件：	
-	在 kubernetes 集群中，API Server 有着非常重要的角色。API Server 负责和 etcd 交互（其他组件不会直接操作 etcd(DB)，只有 API Server 这么做），是整个 kubernetes 集群的数据中心，所有的交互都是以 API Server 为核心的。简单来说，API Server 提供了一下的功能：
-
-	整个集群管理的 API 接口：所有对集群进行的查询和管理都要通过 API 来进行集群内部各个模块之间通信的枢纽：所有模块之前并不会之间互相调用，而是通过和 API Server 打交道来完成自己那部分的工作
-	
-k8s核心概念：
-	http://www.cnblogs.com/zhenyuyaodidiao/p/6500720.html
-	
-
-Deployments是kubernetes中的一种控制器，是比ReplicaSet更高级的概念，它最重的特性是支持对pod与ReplicaSet的声明式升级，声明式升级比其它方式的升级更安全可靠。需要注意的是用户不应该手动管理被Deployments创建的ReplicaSet。
-
-关于ReplicaSet：
-	https://blog.csdn.net/denglelai123/article/details/80845875
