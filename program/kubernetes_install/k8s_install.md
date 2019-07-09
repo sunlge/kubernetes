@@ -157,7 +157,7 @@ Environment="NO_PROXY=127.0.0.0/8,192.168.100.0/24"   ##自己的代理地址
 ```
 [root@k8s1 ~]# systemctl stop firewalld
 [root@k8s1 ~]# systemctl disable firewalld
-[root@k8s1 ~]# systemctl enable !$
+[root@k8s1 ~]# systemctl enable kubelet
 [root@k8s1 ~]# systemctl status kubelet
 [root@k8s1 ~]# systemctl start kubelet
 [root@k8s1 ~]# systemctl enable docker
