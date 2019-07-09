@@ -80,6 +80,10 @@ gpgcheck=1
 gpgkey=https://mirrors.aliyun.com/kubernetes/yum/doc/yum-key.gpg
 enabled=1
 EOF
+
+[root@k8s1 ~]# wget https://raw.githubusercontent.com/sunlge/kubernetes/k8s-1.14.0/docker-ce.repo
+[root@k8s1 ~]# mv docker-ce.repo /etc/yum.repos.d/
+[root@k8s1 ~]# yum clean all && yum makecache
 ```
 
 **2.解决密钥报错问题。(Master，Node节点都要做)**
