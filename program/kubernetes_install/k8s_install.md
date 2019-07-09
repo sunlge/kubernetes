@@ -60,11 +60,18 @@
 	2.master：kubeadm init
 	3.nodes：kubeadm join
 
+**环境介绍**
+|节点|IP 地址|
+|----|-----|
+|`Master`|`192.168.65.60`|
+|`Node01`| `192.168.65.61`|
+
 ## 开始部署
+
 **1.配置yum节点，阿里的。(Master，Node节点都要做)**
 ---
 ```
-[root@k8s1 yum.repos.d]# vim k8s.repo 
+[root@k8s1 ~]# cat >> /etc/yum.repos.d/k8s.repo <<EOF
 [kubernetes]
 name=k8s Repo
 baseurl=https://mirrors.aliyun.com/kubernetes/yum/repos/kubernetes-el7-x86_64/
@@ -84,7 +91,6 @@ enabled=1
 ---
 ```
 [root@k8s1 ~]# yum -y  install docker-ce-18.09.3 kubelet-1.14.0-0  kubeadm-1.14.0-0 kubectl-1.14.0-0
-[root@k8s1 ~]# systemctl start docker
 [root@k8s1 ~]# mkdir -p /etc/docker/
 [root@k8s1 ~]# cat >> /etc/docker/daemon.json <<EOF
 {
@@ -107,7 +113,7 @@ enabled=1
 **5.加载模块(如果不使用ipvs模式可掠过。)**
 ---
 ```
-[root@master ~]# modprobe br_netfilter
+[root@k8s1 ~]# modprobe br_netfilter
 #使用Ip_vs
 	modprobe ip_vs
 	modprobe ip_vs_rr
@@ -126,8 +132,8 @@ enabled=1
 ---
 ```
 [root@k8s1 ~]# vim /usr/lib/systemd/system/docker.service 
-Environment="HTTPS_PROXY=http://www.ik8s.io:10080"
-Environment="NO_PROXY=127.0.0.0/8,192.168.100.0/24"
+Environment="HTTPS_PROXY=http://sunlge.ik8s.io:10080" ##自己的代理
+Environment="NO_PROXY=127.0.0.0/8,192.168.100.0/24"   ##自己的代理地址
 ```
 **7.生成配置文件检查**
 ---
@@ -167,8 +173,9 @@ Environment="NO_PROXY=127.0.0.0/8,192.168.100.0/24"
 [root@k8s1 ~]# sed -i "/swap/s/^/#/g"  /etc/fstab
 [root@k8s1 ~]# sed -n '/swap/p' /etc/fstab
 #/dev/mapper/centos-swap swap                    swap    defaults        0 0
-[root@k8s1 ~]# vim /etc/sysconfig/kubelet
-KUBELET_EXTRA_ARGS="--fail-swap-on=false" ##swap开启时不让其出错
+[root@k8s1 ~]# cat > /etc/sysconfig/kubelet <<EOF
+KUBELET_EXTRA_ARGS="--fail-swap-on=false"  ##swap开启时不让其出错
+EOF
 ```
 
 **11.提前将镜像下载到本地,下面几个镜像是必须的.**
@@ -182,6 +189,7 @@ KUBELET_EXTRA_ARGS="--fail-swap-on=false" ##swap开启时不让其出错
 	k8s.gcr.io/etcd       
 	k8s.gcr.io/pause
 	quay.io/coreos/flannel
+	
 [root@k8s1 ~]# for images in  $(kubeadm config images list |sed -nr "s#^k8s.*/(.*)#registry.cn-hangzhou.aliyuncs.com/google_containers/\1#p"); do docker pull $images; done
 [root@k8s1 ~]# docker images | grep ^registry.cn-han | awk '{print "docker tag",$1":"$2,$1":"$2}' | sed -e 's/registry.cn-hangzhou.aliyuncs.com\/google_containers/k8s.gcr.io/2' | sh -x
 [root@k8s1 ~]# docker images | grep ^registry.cn-han | awk '{print "docker rmi """$1""":"""$2}' | sh -x
