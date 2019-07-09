@@ -49,7 +49,7 @@
 	calico：网络配置，网络策略；
 	canel：两者结合体
 	
-**k8s相关镜像获取地址**
+## k8s相关镜像获取地址
 
   可以去Docker Hub上的 [mirrorgooglecontainers](https://hub.docker.com/search/?q=mirrorgooglecontainers&type=image) 获取k8s相关镜像。  
 也可以在Git Hub写Dockerfile文件，然后在Docker Hub上去构建。[参考链接](https://blog.csdn.net/shida_csdn/article/details/78480241)		
