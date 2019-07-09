@@ -134,5 +134,11 @@ Pod是k8s中最小的调度逻辑单元，一个Pod封装多个应用容器（�
 	所有模块之前并不会之间互相调用，而是通过和 API Server 打交道来完成自己那部分的工作
 ```
 
-**k8s核心概念：**   [参考博客](http://www.cnblogs.com/zhenyuyaodidiao/p/6500720.html)
+**K8s的网络模式：**
+
+	节点网络
+	集群网络
+	Pod 网络
+
+**k8s更多核心概念：**   [参考博客](http://www.cnblogs.com/zhenyuyaodidiao/p/6500720.html)
  
