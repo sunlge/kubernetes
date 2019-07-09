@@ -45,50 +45,60 @@ Network：	网络设备，网络栈，端口等
 Mount：		挂载点(文件系统)
 User：		用户和用户组
 ```
-**Pod：(有生命周期的对象)**
-```Pod是k8s中最小的调度逻辑单元，一个Pod封装多个应用容器（也可以只有一个容器）、存储资源、一个独立的网络 IP 以及管理控制容器运行方式的策略选项。
-	  Pod三种运行模式：
-	   	自主式Pod
-	  	控制器管理的Pod
-	  	eplicationController(副本控制器)			
-	  
-	  一个Pod可以拥有多个容器，共享同一个底层的网络名称空间：
-		Net UTS IPC这是共享的		
-	  多个容器互相隔离的资源：
-		User Mount PID 		
-	  还可以去共享存储卷；
-		
-	  需要在Pod上放多个容器时；
-		主容器，相当于一个Pod上的master(程序)
-		辅助的容器，去辅助主容器(程序)完成工作。
-		
-	  一个Pod里的所有容器只能运行在一个node上的这个Pod里。				
-		为了实现Pod的识别，需要在Pod之上附加一些元数据；	
-		拥有一个类似于一个Key值，这个Key值必须是value的这种概念。否则就不是这个Pod。
-		根据selector(标签选择器去选择)
-		Pod，Label，Label Selector 标签选择器
-			Label：key=value
-			Label Selector：
+**Pod(有生命周期的对象):**
 ```
+Pod是k8s中最小的调度逻辑单元，一个Pod封装多个应用容器（也可以只有一个容器）、存储资源、一个独立的网络 IP 以及管理控制容器运行方式的策略选项。
+   Pod三种运行模式：
+  	自主式Pod
+	控制器管理的Pod
+	ReplicationController(副本控制器)				 
+
+---
+
+一个Pod可以拥有多个容器，共享同一个底层的网络名称空间：
+   Net UTS IPC这是共享的		
+
+---
+
+多个容器互相隔离的资源：
+   User Mount PID,它还可以去挂载共享存储卷。		
+
+---
+
+需要在Pod上放多个容器时；
+   	主容器，相当于一个Pod上的master(程序)
+   	辅助的容器，去辅助主容器(程序)完成工作。
+
+---		
+
+一个Pod里的所有容器只能运行在一个node上的这个Pod里。				
+	为了实现Pod的识别，需要在Pod之上附加一些元数据；	
+	拥有一个类似于一个Key值，这个Key值必须是value的这种概念。否则就不是这个Pod。
+	根据selector(标签选择器去选择)
+	 	Pod，Label，Label Selector 标签选择器
+		Label：key=value
+		Label Selector：
+```
+
 **副本控制器(Replication Controller，RC)**
 
-  RC 确保任何时候 Kubernetes 集群中有指定数量的 pod 副本(replicas)在运行。通过监控运行中的 Pod 来保证集群中运行指定数目的 Pod 副本。指定的数目可以是多个也可以是1个；少于指定数目，RC 就会启动运行新的 Pod 副本；多于指定数目，RC 就会终止多余的 Pod 副本。
+  `RC` 确保任何时候 `Kubernetes` 集群中有指定数量的 `Pod` 副本 `replicas` 在运行。通过监控运行中的 Pod 来保证集群中运行指定数目的 Pod 副本。指定的数目可以是多个也可以是1个；少于指定数目，RC 就会启动运行新的 Pod 副本；多于指定数目，RC 就会终止多余的 Pod 副本。
 		
 **副本集（Replica Set，RS）**
 
-  ReplicaSet（RS）是 RC 的升级版本，唯一区别是对选择器的支持，RS 能支持更多种类的匹配模式。副本集对象一般不单独使用，而是作为 Deployment 的理想状态参数使用。
+  `ReplicaSet（RS）`是 `RC` 的升级版本，唯一区别是对选择器的支持，`RS` 能支持更多种类的匹配模式。副本集对象一般不单独使用，而是作为 `Deployment` 的理想状态参数使用。
 		
 **Deployment控制器（Deployment）**
   
-  部署表示用户对 Kubernetes 集群的一次更新操作。部署比 RS 应用更广，可以是创建一个新的服务，更新一个新的服务，也可以是滚动升级一个服务。滚动升级一个服务，实际是创建一个新的 RS，然后逐渐将新 RS 中副本数增加到理想状态，将旧 RS 中的副本数减小到 0的复合操作；这样一个复合操作用一个RS是不太好描述的，所以用一个更通用的 Deployment 来描述。不建议您手动管理利用 Deployment 创建的 RS。
+  部署表示用户对 Kubernetes 集群的一次更新操作。部署比 RS 应用更广，可以是创建一个新的服务，更新一个新的服务，也可以是滚动升级一个服务。滚动升级一个服务，实际是创建一个新的 `RS`，然后逐渐将新 `RS` 中副本数增加到理想状态，将旧 `RS` 中的副本数减小到 `0` 的复合操作；这样一个复合操作用一个RS是不太好描述的，所以用一个更通用的 `Deployment` 来描述。不建议您手动管理利用 `Deployment` 创建的 `RS`。
 
 **服务（Service）**
   
-  Service 也是 Kubernetes 的基本操作单元，是真实应用服务的抽象，每一个服务后面都有很多对应的容器来提供支持，通过 Kube-Proxy 的 port 和服务 selector 决定服务请求传递给后端的容器，对外表现为一个单一访问接口，外部不需要了解后端如何运行，这给扩展或维护后端带来很大的好处。
+  `Service` 也是 Kubernetes 的基本操作单元，是真实应用服务的抽象，每一个服务后面都有很多对应的容器来提供支持，通过 `Kube-Proxy` 的 port 和服务 `selector` 决定服务请求传递给后端的容器，对外表现为一个单一访问接口，外部不需要了解后端如何运行，这给扩展或维护后端带来很大的好处。
 
 **标签（labels）**
   
-  Labels 的实质是附着在资源对象上的一系列 Key/Value 键值对，用于指定对用户有意义的对象的属性，标签对内核系统是没有直接意义的。标签可以在创建一个对象的时候直接赋予，也可以在后期随时修改，每一个对象可以拥有多个标签，但 key 值必须唯一。
+  `Labels` 的实质是附着在资源对象上的一系列 `Key/Value` 键值对，用于指定对用户有意义的对象的属性，标签对内核系统是没有直接意义的。标签可以在创建一个对象的时候直接赋予，也可以在后期随时修改，每一个对象可以拥有多个标签，但 `key` 值必须唯一。
 
 **存储卷（Volume）**
   
@@ -106,9 +116,11 @@ User：		用户和用户组
 
   `Ingress Controller` 实质上可以理解为是个监视器，`Ingress Controller` 通过不断地跟 `kubernetes API` 打交道，实时的感知后端 service、pod 等变化，比如新增和减少 pod，service 增加与减少等；当得到这些变化信息后，Ingress Controller 再结合下文的 Ingress 生成配置，然后更新反向代理负载均衡器，并刷新其配置，达到服务发现的作用。  
 
-k8s_master组件：
+**k8s_master组件：**
+
 	API Server：
 		负责接受、解析、处理请求；
+	
 	Scheduler
 		调度器，调度每一个容器创建的请求
 			观测每一个node的总共可用的CPU，RAM存储资源，根据容器的所需资源的最低资源来评估哪一个node节点合适
@@ -117,10 +129,24 @@ k8s_master组件：
 			预选，评估每一个node有几个符合
 			优选，评估出来后选择最佳
 	
-	controller-manager
+	controller-manager:
 		控制器管理器，确保控制器处于健康状态；
+		##安装配置	
 		
-node_组件：
+	kubectl:
+		它的主要功能就是管理集群
+
+	kubelet 的主要功能就是:
+	定时从某个地方获取节点上 pod/container 的期望状态（运行什么容器、运行的副本数量、网络或者存储如何配置等等），并调用对应的容器平台接口达到这个状态
+	集群状态下，kubelet 会从 master 上读取信息，但其实 kubelet 还可以从其他地方获取节点的 pod 信息。目前 kubelet 支持三种数据源：
+		本地文件
+		通过 url 从网络上某个地址来获取信息
+		API Server：从 kubernetes master 节点获取信息
+		
+	
+		
+**Node_组件：**
+
 	kubelet：
 		集群代理
 		Scheduler调度的结果由kubelet执行，启动Pod，本机管理Pod
@@ -131,36 +157,34 @@ node_组件：
 		
 	docker
 		容器引擎
-	RKT
-	supervisord
-	fluentd
 	
-K8s网络：
+**K8s的网络模式：**
+
 	节点网络
 	集群网络
 	Pod 网络
 	
-CNI：接入外部的网络服务解决方案
+**CNI：接入外部的网络服务解决方案**
+
 	flannel：网络配置
 	calico：网络配置，网络策略；
 	canel：两者结合体
 ·		
 
-###Docker Hub上的
-	mirrorgooglecontainers存有最新k8s的镜像
+**k8s相关镜像获取地址**
+
+  可以去Docker Hub上的 [mirrorgooglecontainers](https://hub.docker.com/search/?q=mirrorgooglecontainers&type=image) 获取k8s相关镜像。  
+也可以在Git Hub写Dockerfile文件，然后在Docker Hub上去构建。[参考链接](https://blog.csdn.net/shida_csdn/article/details/78480241)
 	
-kubeadm
+**kubeadm安装**
+
 	1.master，nodes：安装kubelet，kubeadm，docker
 	2.master：kubeadm init
 	3.nodes：kubeadm join
-可以参照文档
-	https://github.com/kubernetes/kubeadm/tree/master/docs/design
-	
-k8s分布式部署：//单一的master节点
 
-https://mirrors.aliyun.com/kubernetes/yum/repos/kubernetes-el7-x86_64/
-
-##配置yum节点，阿里的
+## 开始部署
+```
+1.配置yum节点，阿里的
 [root@k8s1 yum.repos.d]# vim k8s.repo 
 [kubernetes]
 name=k8s Repo
@@ -169,38 +193,20 @@ gpgcheck=1
 gpgkey=https://mirrors.aliyun.com/kubernetes/yum/doc/yum-key.gpg
 enabled=1
 
-##解决密钥报错问题
+2.解决密钥报错问题
 [root@k8s1 ~]# wget https://mirrors.aliyun.com/kubernetes/yum/doc/yum-key.gpg
-[root@k8s1 ~]# rpm --import yum-key.gpg
 [root@k8s1 ~]# wget https://mirrors.aliyun.com/kubernetes/yum/doc/rpm-package-key.gpg
+[root@k8s1 ~]# rpm --import yum-key.gpg rpm-package-key.gpg
 
-##安装配置	
-kubelet 的主要功能就是
-	定时从某个地方获取节点上 pod/container 的期望状态（运行什么容器、运行的副本数量、网络或者存储如何配置等等），并调用对应的容器平台接口达到这个状态
-	集群状态下，kubelet 会从 master 上读取信息，但其实 kubelet 还可以从其他地方获取节点的 pod 信息。目前 kubelet 支持三种数据源：
-		本地文件
-		通过 url 从网络上某个地址来获取信息
-		API Server：从 kubernetes master 节点获取信息
-		
-kubectl 的主要功能就是管理集群
-		
+3.Master节点使用kubeadm安装k8s相关组件		
 [root@k8s1 ~]# yum -y  install docker-ce-18.09.3 kubelet-1.14.0-0  kubeadm-1.14.0-0 kubectl-1.14.0-0
-
+[root@k8s1 ~]# systemctl start docker 
 [root@master ~]# vim /etc/docker/daemon.json
 {
-  "registry-mirrors": ["https://nw1puivx.mirror.aliyuncs.com"]
-  "exec-opts": ["native.cgroupdriver=systemd"],
-  "log-driver": "json-file",
-  "log-opts": {
-    "max-size": "100m"
-  },
-  "storage-driver": "overlay2",
-  "storage-opts": [
-    "overlay2.override_kernel_check=true"
-  ]
+  "registry-mirrors": ["https://nw1puivx.mirror.aliyuncs.com"]	##可以自己在阿里云申请一个镜像加速器
 }
 
-Service模型：
+4.Service模型简单介绍：
 	userspace 	1.1-
 		依赖于Iptables。
 	iptables 	1.10-
@@ -209,7 +215,7 @@ Service模型：
 		编辑Kubelet的配置文件/etc/sysconfig/kubelet
 			KUBE_PROXY_MODE=ipvs
 			
-#加载模块
+5.加载模块(如果不使用ipvs模式可掠过。)
 [root@master ~]# modprobe br_netfilter
 #使用Ip_vs
 	modprobe ip_vs
@@ -217,30 +223,26 @@ Service模型：
 	modprobe ip_vs_wrr
 	modprobe ip_vs_sh
 	modprobe nf_conntrack_ipv4
-
+	
+##不为1代表没有装载好，请自己检查。
 [root@k8s1 ~]# cat /proc/sys/net/bridge/bridge-nf-call-ip6tables 
 1
 [root@k8s1 ~]# cat /proc/sys/net/bridge/bridge-nf-call-iptables 
 1
 
-##额外步骤--错误的
-[root@master ~]# vim /usr/lib/systemd/system/docker.service
-ExecStart=/usr/sbin/iptables -p FORWRD ACCEPT
-
-
-##自己装镜像，可以不做省略下步骤。
+6.设置Docker 代理(自己装镜像，可以省略下面步骤。)此处略过就行
 [root@k8s1 ~]# vim /usr/lib/systemd/system/docker.service 
 Environment="HTTPS_PROXY=http://www.ik8s.io:10080"
 Environment="NO_PROXY=127.0.0.0/8,192.168.100.0/24"
 
-##生成配置文件		
+7.生成配置文件检查
 [root@k8s1 ~]# rpm -ql kubelet
 ##清单目录 /etc/kubernetes/manifests
 ##配置文件 /etc/sysconfig/kubelet
 ##untli file /etc/systemd/system/kubelet.service
 ##主程序   /usr/bin/kubelet
 
-##kubelet在集群init时才可以启动
+8.启动相关k8s服务
 [root@k8s1 ~]# systemctl start kubelet
 [root@k8s1 ~]# systemctl status kubelet
 [root@k8s1 ~]# systemctl stop kubelet
@@ -248,7 +250,7 @@ Environment="NO_PROXY=127.0.0.0/8,192.168.100.0/24"
 [root@k8s1 ~]# systemctl enable docker
 [root@k8s1 ~]# systemctl start !$
 
-##初始化
+9.初始化参数介绍
 [root@k8s1 ~]# kubeadm init --help
 
 --apiserver-advertise-address string  ##自己的监听地址
@@ -256,6 +258,7 @@ Environment="NO_PROXY=127.0.0.0/8,192.168.100.0/24"
 --cert-dir string                     ##加载证书文件目录 
 --config string			      ##加载配置文件
 
+10.禁用swap分区
 [root@k8s1 ~]# cat /etc/sysconfig/kubelet
 KUBELET_EXTRA_ARGS="--fail-swap-on=false" ##swap开启时不让其出错
 
@@ -284,8 +287,6 @@ KUBELET_EXTRA_ARGS="--fail-swap-on=false" ##swap开启时不让其出错
 	k8s.gcr.io/etcd       
 	k8s.gcr.io/pause 
 
-关于获取镜像的问题：
-	https://blog.csdn.net/shida_csdn/article/details/78480241
 	
 ##全部装载完成之后：
 	会监听一个6443的端口
