@@ -79,6 +79,7 @@ baseurl=https://mirrors.aliyun.com/kubernetes/yum/repos/kubernetes-el7-x86_64/
 gpgcheck=1
 gpgkey=https://mirrors.aliyun.com/kubernetes/yum/doc/yum-key.gpg
 enabled=1
+EOF
 ```
 
 **2.解决密钥报错问题。(Master，Node节点都要做)**
