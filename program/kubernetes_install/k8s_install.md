@@ -242,7 +242,7 @@ kubeadm token create --print-join-command
 [root@node1 ~]# systemctl enable kubelet
 [root@node1 ~]# systemctl enable docker	
 [root@node1 ~]# systemctl start  docker
-[root@node1 ~]# cat >> /images <<EOF 
+[root@node1 ~]# cat >> images <<EOF 
 #k8s Node节点所镜像清单
 k8s.gcr.io/kube-proxy
 k8s.gcr.io/coredns
@@ -288,6 +288,5 @@ node01.sunlge.com   Ready    <none>   42m   v1.14.0
 ```
 **Kubernetes相关资源说明:**
 
-[参考链接](https://github.com/sunlge/kubernetes/blob/k8s-1.14.0/program/README.md)
-
-
+[参考链接](https://github.com/sunlge/kubernetes/blob/k8s-1.14.0/program/README.md)  
+[更多Kubernetes参考命令](https://github.com/sunlge/kubernetes/blob/k8s-1.14.0/program/kubernetes_install/k8s_dos.txt)
