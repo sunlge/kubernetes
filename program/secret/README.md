@@ -27,14 +27,16 @@ ConfigMap的缺点:
 ```
 		
 		
-### 创建confgimap
-$ kubectl create configmap <map-name> --from-literal=<parameter-name>=<parameter-value>
-$ kubectl create configmap <map-name> --from-literal=<parameter1>=<parameter1-value> --from-literal=<parameter2>=<parameter2-value> --from-literal=<parameter3>=<parameter3-value>
-$ kubectl create configmap <map-name> --from-file=<file-path>
-$ kubectl apply -f <configmap-file.yaml>
-# 还可以从一个文件夹创建configmap
-$ kubectl create configmap <map-name> --from-file=/path/to/dir
-	
+### confgimap创建方法
+```
+kubectl create configmap <map-name> --from-literal=<parameter-name>=<parameter-value>
+kubectl create configmap <map-name> --from-literal=<parameter1>=<parameter1-value> --from-literal=<parameter2>=<parameter2-value> --from-literal=<parameter3>=<parameter3-value>
+kubectl create configmap <map-name> --from-file=<file-path>
+kubectl apply -f <configmap-file.yaml>
+## 还可以从一个文件夹创建configmap
+kubectl create configmap <map-name> --from-file=/path/to/dir
+```
+### 创建 yaml声明式的confgimap
 	kubectl create cm nginx-config --from-literal=nginx_port=8080 --from-literal=service_name=myapp.sunlge.com		
 	kubectl create cm nginx-www --from-file=./www.conf 
 	[root@master secret]# cat www.conf 
@@ -45,7 +47,8 @@ $ kubectl create configmap <map-name> --from-file=/path/to/dir
 	}
 
 	kubectl explain pod.spec.containers.env.valueFrom.configMapKeyRef.optional	##key必须从configMap中获取，不然报错
-	kubectl explain pods.spec.volumes.configMap.items				##去除不想指定的参数。		
+	kubectl explain pods.spec.volumes.configMap.items				##去除不想指定的参数。	
+
 		
 ### 创建secret的generic
 ```
@@ -77,11 +80,15 @@ kubectl create secret generic mysecret3 --from-env-file=env.md
 		  name: mysql-root-pass
 		  key: password
 
-### 配置文件使用存储卷定义
+### 配置文件使用存储卷定义时需要进行的编码、解码方式
 ```
 ##base64如何解码
 echo TXlwYXNzMTIz |base64 -d
 ```
+**什么是Secret：**  
+---
+Secret与ConfigMap类似，但是用来存储敏感信息。在Master节点上，secret以非加密的形式存储（意味着我们要对master严加管理）。从Kubernetes1.7之后，etcd以加密的形式保存secret。secret的大小被限制为1MB。当Secret挂载到Pod上时，是以tmpfs的形式挂载，即这些内容都是保存在节点的内存中，而不是写入磁盘，通过这种方式来确保信息的安全性。
+
 ### 使用指定的key创建名为tls-secret的TLS secret
 	kubectl create secret tls tls-secret --cert=./tls.crt --key=./tls.key --dry-run -oyaml
 
@@ -90,3 +97,5 @@ echo TXlwYXNzMTIz |base64 -d
 	  docker-registry 创建一个给 Docker registry 使用的 secret
 	  generic         从本地 file, directory 或者 literal value 创建一个 secret
 	  tls             创建一个 TLS secret
+## 参考资料
+[腾讯云社区](https://cloud.tencent.com/developer/article/1368094)
