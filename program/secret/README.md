@@ -24,13 +24,23 @@
 		
 ### 创建secret的generic
 ```
-kubectl create secret generic mysecret1 --from-literal=user=tom --from-literal=password1=redhat --from-literal=password2=redhat	 #创建无需指定
+kubectl create secret generic mysecret1 --from-literal=user=tom --from-literal=password1=redhat --from-literal=password2=redhat	 #创建时直接在命令中将value当参数
 
-# 下面的方法是使用文件的方式，两种方法创建的secret资源查看yaml文件时所有的value都会加密。
+
+# 下面的方法是使用一个文件对应一个变量的方式，两种方法创建的secret资源查看yaml文件时所有的value都会加密。
 echo -n tom > user
 echo -n redhat > password1
 echo -n redhat > password2
 kubectl create secret generic mysecret2 --from-file=./user --fromfile=./password1 --from-file=./password2     # 注意：此文件名就是变量名
+
+# 下面是使用一个文件对应多个变量的方式
+cat > ./env.md <<EOF
+user=tom
+password1=redhat
+password2=redhat
+EOF
+kubectl create secret generic mysecret3 --from-env-file=env.md
+
 ```
 ### yaml的配置文件里定义环境变量
 	spec
