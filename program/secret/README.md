@@ -22,9 +22,17 @@
 	kubectl explain pod.spec.containers.env.valueFrom.configMapKeyRef.optional	##key必须从configMap中获取，不然报错
 	kubectl explain pods.spec.volumes.configMap.items				##去除不想指定的参数。		
 		
-### 创建secret
-	kubectl create secret generic mysql-root-password --from-literal=password=Mypass123
-### 配置文件环境变量定义
+### 创建secret的generic
+```
+kubectl create secret generic mysecret1 --from-literal=user=tom --from-literal=password1=redhat --from-literal=password2=redhat	 #创建无需指定
+
+# 下面的方法是使用文件的方式，两种方法创建的secret资源查看yaml文件时所有的value都会加密。
+echo -n tom > user
+echo -n redhat > password1
+echo -n redhat > password2
+kubectl create secret generic mysecret2 --from-file=./user --fromfile=./password1 --from-file=./password2     # 注意：此文件名就是变量名
+```
+### yaml的配置文件里定义环境变量
 	spec
 	...
 	    env:
