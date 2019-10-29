@@ -29,7 +29,8 @@ spec:
         emptyDir: {}
       containers:
       - name: metrics-server
-        image: k8s.gcr.io/metrics-server-amd64:v0.3.3
+      #  image: k8s.gcr.io/metrics-server-amd64:v0.3.3
+        image: registry.cn-hangzhou.aliyuncs.com/google_containers/metrics-server-amd64:v0.3.3
         imagePullPolicy: IfNotPresent
       #因为Pod内部没有hosts文件来解析，所以会找不到域名，加上下面几行命令让其改为内部IP查找。
         command:
