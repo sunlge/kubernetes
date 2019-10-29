@@ -1,4 +1,7 @@
-### 配置容器化应用的方式：
+# Secret和Congimap应用场景
+应用场景：镜像往往是一个应用的基础，还有很多需要自定义的参数或配置，例如资源的消耗、日志的位置级别等等，这些配置可能会有很多，因此不能放入镜像中，Kubernetes中提供了Configmap来实现向容器中提供配置文件或环境变量来实现不同配置，从而实现了镜像配置与镜像本身解耦，使容器应用做到不依赖于环境配置。
+
+## 配置容器化应用的方式：
 	1.自定义命令行参数；
 		args: []
 	2.把配置文件直接焙进镜像；
@@ -6,10 +9,32 @@
 		(1)Cloud Native的应用程序一般可直接通过环境变量加载配置；
 		(2)通过Entrypoint脚本来预处理变量为配置文件中的配置信息；
 	4.存储卷可以实施更新
-				
+**什么是ConfigMap:**  
+---
+利用ConfigMap可以解耦部署与配置的关系，对于同一个应用部署文件，可以利用valueFrom字段引用一个在测试环境和生产环境都有的ConfigMap（当然配置内容不相同，只是名字相同），就可以降低环境管理和部署的复杂度。
+```
+ConfigMap有三种用法：
+	生成为容器内的环境变量
+	设置容器启动命令的参数
+	挂载为容器内部的文件或目录
+	
+ConfigMap的缺点:
+	ConfigMap必须在Pod之前创建
+	ConfigMap属于某个NameSpace，只有处于相同NameSpace的Pod才可以应用它
+	ConfigMap中的配额管理还未实现
+	如果是volume的形式挂载到容器内部，只能挂载到某个目录下，该目录下原有的文件会被覆盖掉
+	静态Pod不能用ConfigMap
+```
 		
 		
 ### 创建confgimap
+$ kubectl create configmap <map-name> --from-literal=<parameter-name>=<parameter-value>
+$ kubectl create configmap <map-name> --from-literal=<parameter1>=<parameter1-value> --from-literal=<parameter2>=<parameter2-value> --from-literal=<parameter3>=<parameter3-value>
+$ kubectl create configmap <map-name> --from-file=<file-path>
+$ kubectl apply -f <configmap-file.yaml>
+# 还可以从一个文件夹创建configmap
+$ kubectl create configmap <map-name> --from-file=/path/to/dir
+	
 	kubectl create cm nginx-config --from-literal=nginx_port=8080 --from-literal=service_name=myapp.sunlge.com		
 	kubectl create cm nginx-www --from-file=./www.conf 
 	[root@master secret]# cat www.conf 
