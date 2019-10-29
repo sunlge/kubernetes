@@ -5,13 +5,15 @@
 	heapster依赖于influxDB
 	可以使用grafana来展示
 ```
-**metrics server是什么： **  
+
+**metrics server是什么:**
+---
 	metrics Server是集群级别的资源利用率数据的聚合器( aggregator )  
 	相当于一个简化版的Heapster.  
 	它通过kubernetes聚合器注册到主 API Server上，然后基于kubelet的Summary API收集每个节点上的指标数据.并将它们存储于内存中然后以指标API格式提供.  	
 
-**部署好metrics server 之后就可以直接通过API来获取相关的资源指标，如下：  **
-
+**部署好metrics server 之后就可以直接通过API来获取相关的资源指标，如下:**
+---
 ```
 kubectl get --raw "/apis/metrics.k8s.io/v1beta1/pods" | jq .
 kubectl get --raw "/apis/metrics.k8s.io/v1beta1/node" | jq .
