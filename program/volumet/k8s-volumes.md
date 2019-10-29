@@ -1,14 +1,47 @@
 # volumes的简单说明
 Kubernets当中，“$”符号是变量引用
 
-### 什么是pv，pvc?
-	pvc依赖于pv，pv依赖于存储方式。
-	想要创建一个pvc，必须要有满足条件的pv。
-	所以有一个pvc类型叫做动态pvc，当你想要创建一个pvc时，会动态自动创建一个pv来满足需要。
-### pvc 与 pv之间的关系
-    pvc和pv是绑定关系，多个Pod可用同一个pvc，但是同一个pvc只能绑定同一个pv。 
-    动态pv，根据storageClassName(存储类)，pvc去根据这个存储类去动态创建pv。
-    创建动态PV需要先定义一个storageClass，然后在创建一个PersistentVolumeClain即可。它会根据存储类动态创建pv
+**kubernetes当中存储方式的类型**
+---
+```
+简单来说有spec.volumes字段下有：
+
+下面为常见类型，还有很多，可参考官网。
+	emptyDir特性：
+		会随机在node节点上创建挂载点，但是挂载目录会随着Pod的删除而删除。	
+		
+	emptyDir：{medium，sizaLimit}
+		medium：存储介质，默认为普通存储，改为Memory则是用内存做存储方式。
+		sizaLimit：做限制，如果启动Memory，一定要做一个限制/
+	
+	hostPath特性：
+		在yaml文件中写的挂在点路径如果没有会自动创建，因为Pod资源默认是随机调度的，所以会随机在node节点上创建挂载点。
+		Pod资源删除之后挂在目录并不会随着Pod的消失而消失。
+	hostPath嵌套字段：
+	   Path：就是挂载点了
+	   type: <string>
+	   	DirectoryOrCreate:指定路径不存在自动创建，权限为0755，属主属组kubelet
+		Directory: 必须存在的目录路径
+		FileOrCreate：直接的路径不存在时自动创建权限为0644的空文件，属主属组为kubelet
+		File：必须存在的文件路径
+		Socket：必须存在的Socket文件路径
+		CharDevice：必须存在的字符设备文件路径
+		BlockDevice：必须存在的块设置文件路径
+
+还有就是网络存储类型了。不过需要依赖于PV，PVC。
+```
+
+**什么是pv，pvc?**  
+---
+pvc依赖于pv，pv依赖于存储方式。  
+pv就相当于一个存储池，当创建pvc时，pvc需要存储空间，这个存储空间就是从pv中申请。所以想要创建一个pvc，必须要有满足条件的pv。  
+
+**简单说一下存储供给的方式：**  
+---
+`静态供给`：它是由集群管理员手动创建一定数量的PV的资源供应方式。这些PV负责处理存储系统的细节，并将其抽象成易用的存储资源提供给用户，它不强依赖于存储类(StorageClass) 。  StorageClass资源需要自行创建。此处只简单介绍一下。
+
+`动态存储` ：不存在某静态的PV匹配到用户的PVC申请时，kubernetes集群会尝试为PVC动态创建符合需求的PV，这就是`动态供给`。它依赖于存储类的辅助，pvc必须向一个事先存在的存储类发起动态分配的PV请求。
+所以有一个pvc类型叫做动态pvc，当你想要创建一个pvc时，会动态自动创建一个pv来满足需要。
 
 ## volumes参数介绍
 ```
@@ -58,41 +91,4 @@ kubectl explain PersistentVolume.spec.persistentVolumeReclaimPolicy	##pv空间�
 		(2)通过Entrypoint脚本来预处理变量为配置文件中的配置信息；
 	4.存储卷可以实施更新
 		
-### 创建confgimap
-	kubectl create cm nginx-config --from-literal=nginx_port=8080 --from-literal=service_name=myapp.sunlge.com		
-	kubectl create cm nginx-www --from-file=./www.conf 
-	[root@master secret]# cat www.conf 
-	server {
-		server_name myapp.sunlge.com;
-		listen 80;
-		root /data/web/html/;
-	}
 
-	kubectl explain pod.spec.containers.env.valueFrom.configMapKeyRef.optional	##key必须从configMap中获取，不然报错
-	kubectl explain pods.spec.volumes.configMap.items				##去除不想指定的参数。
-
-### 创建secret
-	kubectl create secret generic mysql-root-password --from-literal=password=Mypass123
-### 配置文件环境变量定义
-	spec
-	...
-	    env:
-	    - name: MYSQL_ROOT_PASSWORD
-	      valueFrom: 
-		secretKeyRef:  ##如果是cm换成configMapKeyRef即可
-		  name: mysql-root-pass
-		  key: password
-
-### 配置文件使用存储卷定义
-```
-##base64如何解码
-echo TXlwYXNzMTIz |base64 -d
-```
-### 使用指定的key创建名为tls-secret的TLS secret
-	kubectl create secret tls tls-secret --cert=./tls.crt --key=./tls.key --dry-run -oyaml
-
-### 查看帮助
-	kubectl create secret --help
-	  docker-registry 创建一个给 Docker registry 使用的 secret
-	  generic         从本地 file, directory 或者 literal value 创建一个 secret
-	  tls             创建一个 TLS secret
