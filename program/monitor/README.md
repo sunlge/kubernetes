@@ -29,7 +29,7 @@ K8S自动伸缩分为：
 
 自动扩展主要分为两种：
 	水平扩展(scale out)，针对于实例数目的增减。
-	垂直扩展(scal up)，即单个实例可以使用的资源的增减, 比如增加cpu和增大内存。
+	垂直扩展(scale up)， 即单个实例可以使用的资源的增减, 比如增加cpu和增大内存。
 
 HPA属于前者。它可以根据CPU使用率或应用自定义metrics自动扩展Pod数量(支持 replication controller、deployment 和 replica set)。
 
