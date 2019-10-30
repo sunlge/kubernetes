@@ -68,5 +68,6 @@ kubectl delete hpa nginx
 
 ```
 ## HPA更多介绍: [HPA](http://www.yfshare.vip/2019/01/28/k8s%E9%9B%86%E7%BE%A4%E6%B0%B4%E5%B9%B3%E6%89%A9%E5%B1%95-HPA/)
+## horizontal参数版本不同参数可能会有变，可在官网查看最新介绍[HPA官网:1.16](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/)
 ## k8s之上promtheus的项目: [promtheus](https://github.com/DirectXMan12)
 
