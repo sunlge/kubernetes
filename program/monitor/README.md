@@ -24,6 +24,14 @@ kubectl get --raw "/apis/metrics.k8s.io/v1beta1/node" | jq .
 ```
 想要做HPA必须与资源限制一起，否则做了也没用
 request and limits
+做了资源限制，查看HPA资源时，字段TARGETS有一个Unknown，解决这个需要修改/etc/kubernetes/manifests/kube-controller-manager.yaml
+在 spec.containers.command添加：
+spec:
+  containers:
+  - command:
+    - --horizontal-pod-autoscaler-use-rest-clients=false
+    - --horizontal-pod-autoscaler-sync-period=10s
+
 	
 kubectl run myapp --image=ikubernetes/myapp:v1 --replicas=1 --requests='cpu=50m,memory=128Mi' --limits='cpu=50m,memory=128Mi' --labels='app=myapp' --expose --port=80
 # HPA创建用命令即可，以下为基本示例
