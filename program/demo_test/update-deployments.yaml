@@ -21,7 +21,13 @@ spec:
   selector:
     matchLabels:
       run: myapp-test01
-  strategy: {}
+  strategy: 
+    rollingUpdate:
+    # 升级过程中一次升级几个
+      maxSurge: 3
+    # 在升级过程中，只能有一个不可用
+      maxUnavailable: 1
+    type: RollingUpdate
   template:
     metadata:
       labels:
