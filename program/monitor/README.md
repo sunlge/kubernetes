@@ -19,18 +19,42 @@ kubectl get --raw "/apis/metrics.k8s.io/v1beta1/pods" | jq .
 kubectl get --raw "/apis/metrics.k8s.io/v1beta1/node" | jq .
 ```
 	
-## HPA：
+**HPA介绍**
+---
+```
+K8S集群可以通过Replication Controller的scale机制完成服务的扩容或缩容，实现具有伸缩性的服务。  
+K8S自动伸缩分为：
+	sacle手动伸缩
+	autoscale自动伸缩
+
+自动扩展主要分为两种：
+	水平扩展(scale out)，针对于实例数目的增减。
+	垂直扩展(scal up)，即单个实例可以使用的资源的增减, 比如增加cpu和增大内存。
+
+HPA属于前者。它可以根据CPU使用率或应用自定义metrics自动扩展Pod数量(支持 replication controller、deployment 和 replica set)。
 
 ```
-想要做HPA必须与资源限制一起，否则做了也没用
-request and limits
-做了资源限制，查看HPA资源时，字段TARGETS有一个Unknown，解决这个需要修改/etc/kubernetes/manifests/kube-controller-manager.yaml
+**HPA使用方法**
+---
+```
+1.开启metrics server
+
+2.想要做HPA必须与资源限制(request,limits字段)一起，否则做了也没用
+   request and limits
+
+3.做了资源限制，查看HPA资源时，字段TARGETS有一个Unknown，解决这个需要修改/etc/kubernetes/manifests/kube-controller-manager.yaml
 在 spec.containers.command添加：
 spec:
   containers:
   - command:
     - --horizontal-pod-autoscaler-use-rest-clients=false
     - --horizontal-pod-autoscaler-sync-period=10s
+
+# 更多参数介绍
+horizontal-pod-autoscaler-use-rest-clients： 开启基于rest-clients的自动伸缩
+horizontal-pod-autoscaler-sync-period：自动伸缩的检测周期为20s，默认为30s
+horizontal-pod-autoscaler-upscale-delay：当检测到满足扩容条件时，延迟多久开始缩容，即该满足的条件持续多久开始扩容，默认为3分钟
+horizontal-pod-autoscaler-downscale-delay：当检测到满足缩容条件时，延迟多久开始缩容，即该满足条件持续多久开始缩容，默认为5分钟
 
 	
 kubectl run myapp --image=ikubernetes/myapp:v1 --replicas=1 --requests='cpu=50m,memory=128Mi' --limits='cpu=50m,memory=128Mi' --labels='app=myapp' --expose --port=80
@@ -43,4 +67,6 @@ kubectl get hpa
 kubectl delete hpa nginx
 
 ```
+## HPA更多介绍: [HPA](http://www.yfshare.vip/2019/01/28/k8s%E9%9B%86%E7%BE%A4%E6%B0%B4%E5%B9%B3%E6%89%A9%E5%B1%95-HPA/)
 ## k8s之上promtheus的项目: [promtheus](https://github.com/DirectXMan12)
+
