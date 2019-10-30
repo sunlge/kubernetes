@@ -22,12 +22,17 @@ kubectl get --raw "/apis/metrics.k8s.io/v1beta1/node" | jq .
 ## HPA：
 
 ```
-想要做HPA必须与资源限制一起
+想要做HPA必须与资源限制一起，否则做了也没用
 request and limits
 	
 kubectl run myapp --image=ikubernetes/myapp:v1 --replicas=1 --requests='cpu=50m,memory=128Mi' --limits='cpu=50m,memory=128Mi' --labels='app=myapp' --expose --port=80
-# 做一个HPA
+# HPA创建用命令即可，以下为基本示例
    kubectl autoscale deployment myapp --min=1 --max=8 --cpu-percent=60
+   kubectl autoscale deployment myapp --min=2 --max=10
+	如果把副本数设置为大于10个运行个数也是10个
+
+kubectl get hpa
+kubectl delete hpa nginx
 
 ```
 ## k8s之上promtheus的项目: [promtheus](https://github.com/DirectXMan12)
