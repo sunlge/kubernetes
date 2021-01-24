@@ -59,6 +59,7 @@ spec:
     image: ikubernetes/myapp:v1
   serviceAccountName: admin
 ```  
+
 ### Pod-sa-demo根据sa创建完之后会自动绑定至一个admin-token-rx989
     [root@master serviceaccout]# kubectl describe pod pod-sa-demo |grep SecretName
     SecretName:  admin-token-rx989
@@ -70,36 +71,35 @@ spec:
 	4.use-context		##设定谁是当前用户
 	5.view				##查看config文件
 
-### 切换用户空间
-	kubectl config use-context sunlge@kubernetes
 
-### 自己建立一个自部署证书，作为另一个账号的认证证书文件。
+#### 自己建立一个自部署证书，作为另一个账号的认证证书文件。
 ```
 [root@master serviceaccout]# (umask 077; openssl genrsa -out sunlge.key 2048)
 [root@master serviceaccout]# openssl req -new -key sunlge.key -out sunlge.csr -subj "/CN=sunlge" ##这里的CN等于你的账号名称
-[root@master serviceaccout]# openssl x509 -req  -in sunlge.csr -CA "/etc/kubernetes/pki/ca.crt"  -CAkey "/etc/kubernetes/pki/ca.key" -CAcreateserial -out sunlge.crt -days 366
+[root@master serviceaccout]# openssl x509 -req  -in sunlge.csr -CA "/etc/kubernetes/pki/ca.crt"  -CAkey "/etc/kubernetes/pki/ca.key" -CAcreateserial -out sunlge.crt -days 36600
 ```
-### sunlge其实就是用户的标识,设定用户账号，--embed-certs=true将信息隐藏起来
+
+#### sunlge其实就是用户的标识,设定用户账号，--embed-certs=true将信息隐藏起来
 	[root@master serviceaccout]# kubectl config  set-credentials sunlge  --client-certificate=./sunlge.crt --client-key=./sunlge.key --embed-certs=true	--kubeconfig=sunlge.config	
 
 
-### 创建一个集群信息，并且将config文件输出到当前目录下的sunlge.config
+#### 创建一个集群信息，并且将config文件输出到当前目录下的sunlge.config
 	[root@master serviceaccout]# kubectl config set-cluster mycluster --kubeconfig=./sunlge.config --server="https://172.21.252.51:6443" --certificate-authority=/etc/kubernetes/ssl/ca.pem  --embed-certs=true
 	
 
-### 创建用户，设定上下文。将集群参数和用户参数关联起来。--user其实就是一个标识，随意指定就好。
+#### 创建用户，设定上下文。将集群参数和用户参数关联起来。--user其实就是一个标识，随意指定就好。
 	[root@master serviceaccout]# kubectl config set-context sunlge@mycluster --cluster=mycluster --user=sunlge --kubeconfig=sunlge.config
 
 
-### 切换至用户sunlge，这个用户因为没有权限，所以没有任何的权限。
-    [root@master serviceaccout]# kubectl config use-context sunlge@kubernetes --kubeconfig=sunlge.config
-    Switched to context "sunlge@kubernetes".
+#### 切换至用户sunlge，这个用户因为没有权限，所以没有任何的权限。
+    [root@master serviceaccout]# kubectl config use-context sunlge@mycluster --kubeconfig=sunlge.config
+    Switched to context "sunlge@mycluster".
 
-### 查看刚刚创建的
+#### 查看刚刚创建的
 	[root@master serviceaccout]# kubectl config view --kubeconfig=sunlge.config
 
 
-### 梳理
+#### 梳理
 	创建一个SA会自动创建一个Secrets资源，这个Secrets资源其实就是一个Token令牌
 	Role是一个角色,角色上要定义权限,SA与Role来做一个绑定,也就是所谓的Rolebinding,这样SA就拥有了Role角色的权限
 	robinding资源是干嘛的.它其实就是一个动作,将SA与Role绑定到一起.
