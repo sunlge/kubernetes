@@ -80,20 +80,23 @@ spec:
 [root@master serviceaccout]# openssl x509 -req  -in sunlge.csr -CA "/etc/kubernetes/pki/ca.crt"  -CAkey "/etc/kubernetes/pki/ca.key" -CAcreateserial -out sunlge.crt -days 366
 ```
 ### sunlge其实就是用户的标识,设定用户账号，--embed-certs=true将信息隐藏起来
-	[root@master serviceaccout]# kubectl config set-credentials sunlge  --client-certificate=./sunlge.crt --client-key=./sunlge.key --embed-certs=true	
+	[root@master serviceaccout]# kubectl config  set-credentials sunlge  --client-certificate=./sunlge.crt --client-key=./sunlge.key --embed-certs=true	--kubeconfig=sunlge.config	
+
+
+### 创建一个集群信息，并且将config文件输出到当前目录下的sunlge.config
+	[root@master serviceaccout]# kubectl config set-cluster mycluster --kubeconfig=./sunlge.config --server="https://172.21.252.51:6443" --certificate-authority=/etc/kubernetes/ssl/ca.pem  --embed-certs=true
+	
 
 ### 创建用户，设定上下文。将集群参数和用户参数关联起来。--user其实就是一个标识，随意指定就好。
-	[root@master serviceaccout]# kubectl config set-context sunlge@kubernetes --cluster=kubernetes --user=sunlge
+	[root@master serviceaccout]# kubectl config set-context sunlge@mycluster --cluster=mycluster --user=sunlge --kubeconfig=sunlge.config
+
 
 ### 切换至用户sunlge，这个用户因为没有权限，所以没有任何的权限。
-    [root@master serviceaccout]# kubectl config use-context sunlge@kubernetes
+    [root@master serviceaccout]# kubectl config use-context sunlge@kubernetes --kubeconfig=sunlge.config
     Switched to context "sunlge@kubernetes".
 
-### 创建一个集群信息，并且将config文件输出到当前目录下的test,cof 
-	[root@master serviceaccout]# kubectl config set-cluster mycluster --kubeconfig=./test.cof --server="https://192.168.100.10:6443" --certificate-authority=/etc/kubernetes/pki/ca.crt  --embed-certs=true
-
 ### 查看刚刚创建的
-	[root@master serviceaccout]# kubectl config view --kubeconfig=./test.cof
+	[root@master serviceaccout]# kubectl config view --kubeconfig=sunlge.config
 
 
 ### 梳理
@@ -141,6 +144,7 @@ rules:
   - list
   - watch
 ```
+
 ### binding一个Role，注意绑定的是user用户。
 ```
 [root@master RBAC]# kubectl create rolebinding sunlge-read-pods --role=pods-reader --user=sunlge -oyaml --dry-run 
@@ -158,6 +162,7 @@ subjects:
   kind: User
   name: sunlge
 ```
+
 ### binding一个Role，这里绑定的是一个ServiceAccount账户
 ```
 [root@master RBAC]# kubectl create rolebinding sunlge-read-pods --role=pods-reader --serviceaccount=default:admin -oyaml --dry-run 
@@ -175,6 +180,7 @@ subjects:
   name: admin
   namespace: default
 ```
+
 ### 定义一个ClusterRole
 ```
 [root@master RBAC]# kubectl create clusterrole cluster-reader --verb=get,list,watch --resource=pods -oyaml --dry-run 
@@ -193,6 +199,7 @@ rules:
   - list
   - watch
 ```
+
 ### clusterrolebinding
 ```
 [root@master RBAC]# kubectl create clusterrolebinding cluster-sunlge-pods --clusterrole=cluster-reader --user=sunlge -oyaml --dry-run 
@@ -213,6 +220,7 @@ subjects:
 kubectl get clusterrole		##查看系统的ClusterRole
 kubectl describe clusterrolebindings cluster-admin
 ```
+
 ### 部署一个dashboard：
 ```
 	将service改为NodePort
